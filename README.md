@@ -1,4 +1,4 @@
-1. Original Part
+1. Original Part -> https://github.com/xXAI-botXx/Vorlage-Abschlussarbeit-Latex
 2. My notes
 
 # LaTeX-Vorlage für Abschlussarbeiten 
@@ -77,8 +77,13 @@ sudo apt install texstudio
     - Was heißt das Ergbnis? Was könnte es zuküngtig bedeuten? In Bezug zu anderen Ergbnissen setzen.
 4. Bachelor schreiben
     - Quellen finden
-    - Strukturierung planen
-    - Schreiben beginnen
+    - Strukturierung planen (Inhaltsverzeichnis)
+    - Einleitung schreiben
+    - Grundlagen und Definitionen Kapitel schreiben
+    - Hauptteil schreiben
+    - Schluss schreiben
+    - Abstract schreiben
+    - Korrektur lesen und schreiben
 
 
 
@@ -107,8 +112,66 @@ Trainingsdaten sind im Bereich Deep-Learning immer eines der größten Herausfor
 > Klassische Begriffe, wie Einleitung bitte spzifizieren und ersetzen + der Leser sollte Wissen können was ihn grob erwartet
 > Vom Überthema zum Unterthema sollte sich immer mehr relevante Details binhaltet sein 
 
-> ### FIXME
+Grundlegende Struktur:
+```text
+0. Abstract
+    A short summary of the paper. It spoils you directly and gives you the answer, what this paper analyzed and what it founds
 
+1. Introduction
+    (1) Why is my work/question important and interesting?
+    (2) What is the concrete question and problem? Which scientific question will be tried to answer? Why/how is there a knowledge gap?
+    (3) How did I analyzed/answered this question?
+    (4) Delimitation of my work. What will be not answered? (And why?) What will be answered?
+    (5) How will you answer this question? What follows in the next chapters?
+
+2. Definitions and Basics
+
+
+3. Main
+
+
+4. End
+
+
+```
+
+
+Table of Contents in your context (not finish version)
+
+Scientific Question: 
+
+- Investigation of Material and Shape Quantities on Instance Segmentation Accuracy
+  - Subquestion: Assessing Bias Toward Material or Shape in Instance Segmentation (maybe you have to put more materials than shapes to decrease this bias)
+    -> When the accuracy is better with more Materials than maybe it means that there is a Shape-Bias
+    -> Maybe let this question open? Or you could make another experiment with special Shapes and Materials to get a picture about it -> Which Models decides for Shape and which for Material?
+  - Subquestion: Also in relation to Sim-to-real accuracy
+
+Delimitations:
+- Just for CNN Based Deep Learning Approaches -> Cnn-Based Methods most widely used for Instance-Segmentation (source?)
+- Only for Instance-Segmentation -> Because there is a lack of datasets?
+- The choose of the random shape and material could also have an influence on the result 
+- Only on RGB images -> RGB matters + depth no materials
+- Specific for Bin Picking?
+- Testing on Unknown Data -> Unknown meshes and unknown materials -> to reduce the influence from other sources (o.o.d scenarios)
+
+Experiments:
+- YOLACT trained on different 3xM_Datasets:
+  - Syntethic Testdataset (maybe own 3xM Testdataset, but with unknown 3D-Models and Materials -> so that there is no influence from the novel-objects -> for all models the data are unknown, else for some there will be a subpart of materials and shapes known which leads to another influence)
+  - Real Testdataset
+  - Outlier-Data
+
+
+```
+0. Abstract -> not knowing yet
+
+1. FIXMe
+
+
+```
+
+
+
+<!--
 Inhaltsverzeichnis V1:
 
 - Einleitung
@@ -238,6 +301,15 @@ Inhaltsverzeichnis V2:
 9. Literaturverzeichnis
 ```
 
+-->
+
+
+### Namenskonvention
+
+- Shape = 3D-Model, Mesh = The 3D geometry of an object
+- Material = Texture = The visual characteristics of an object (like Color, Metalness, Roughness, ...)
+
+FIXME
 
 
 ### Experimentenplan
@@ -295,24 +367,6 @@ Metriken:
 - ...
 
 
-
-### Quellen
-
-Bildgröße:
-...
-
-Datensatz größe:
-...
-
-Sim-to-real:
-...
-
-Shape-Material Bias:
-- [Can Biases in ImageNet Models Explain Generalization?](https://openaccess.thecvf.com/content/CVPR2024/papers/Gavrikov_Can_Biases_in_ImageNet_Models_Explain_Generalization_CVPR_2024_paper.pdf)
-- [ImageNet-trained CNNs are biased towards texture; increasing shape bias improves accuracy and robustness](https://arxiv.org/abs/1811.12231)
-
-
-
 ### Präsentation
 
 Struktur:
@@ -323,6 +377,51 @@ Struktur:
 - Experiment
 - Aktuelle Ergebnisse + Schlussfolgerung (Mehrwert)
 - Fazit
+
+
+### Quellen
+
+[Klicke hier, um die Zusammenfassungen zu sehen.](./Source.md)
+
+
+### Weiteres
+
+o.o.d (Out of Distribution) can be:
+- Image Corruption: This includes noise, blur, or distortions in images that were not present during training. For example, a model trained on clear, high-resolution images might struggle when presented with blurry or pixelated versions of those images.
+
+- Adversarial Attacks: In this context, specially crafted inputs are designed to deceive models, leading them to make incorrect predictions. These adversarial examples often lie outside the distribution of training data.
+
+- Domain Shift: This occurs when there is a change in the data collection environment or methodology. For example, a model trained on images taken in bright daylight may perform poorly on images taken at night or in different lighting conditions.
+
+- Style Shift: When the aesthetic or stylistic properties of the input data change, models might struggle. For instance, a model trained on photographs may not perform well on artistic images or sketches.
+
+- Dataset Shift: This includes any changes in the underlying distribution of data points, such as changes in class distributions or features not present during training.
+
+
+---
+
+
+Ja, das klingt nach einer Untersuchung des Shape-Texture-Bias. Du testest, wie gut dein Modell in der Lage ist, zwischen Formen und Texturen zu unterscheiden und ob es dazu neigt, die Segmentierung auf der Basis der Form oder der Textur durchzuführen.
+
+Hier sind einige spezifische Aspekte, die du untersuchst:
+
+1. Textursegmentierung: Du prüfst, ob das Modell besser in der Lage ist, Objekte anhand ihrer Texturen zu segmentieren, selbst wenn diese Texturen auf unterschiedlichen 3D-Modellen angewendet werden.
+
+
+2. Formsegmentierung: Du untersuchst, ob das Modell dazu neigt, Objekte hauptsächlich anhand ihrer Form zu segmentieren, auch wenn verschiedene Texturen verwendet werden.
+
+
+3. Kombination von Form und Textur: Du kannst auch testen, wie das Modell bei Objekten abschneidet, die sowohl verschiedene Formen als auch Texturen kombinieren.
+
+
+4. Bias-Analyse: Indem du die Genauigkeit und Performance deines Modells in diesen Szenarien analysierst, kannst du herausfinden, ob ein Bias in Bezug auf Form oder Textur besteht.
+
+
+Zusammenfassend lässt sich sagen, dass du den Shape-Texture-Bias untersuchst, um zu verstehen, welche Merkmale dein Modell stärker gewichtet, wenn es um die Segmentierung von Objekten geht.
+
+
+
+
 
 
 
