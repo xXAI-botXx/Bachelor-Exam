@@ -1,3 +1,4 @@
+It follows:
 1. Original Part -> https://github.com/xXAI-botXx/Vorlage-Abschlussarbeit-Latex
 2. My notes
 
@@ -33,6 +34,11 @@ Von Tobia Ippolito 2024 bei dem Unternehmen Optonic GmbH in Freiburg.
 Tags: Computer Vision, Deep Learning, Syntethic Datageneration
 
 Sprache: Englisch
+
+Title:
+- Depth Data and Shape-Texture Biases in Instance Segmentation
+or
+- Using 3D-Information Improves Shape Awareness
 
 
 
@@ -135,6 +141,18 @@ Grundlegende Struktur:
 
 ```
 
+Inhaltsverzeichnis verbessert: -> etwa 10 Seiten pro Kapitel (außer Fazit)
+
+- Einleitung -> Thema einleitung, Systematik, verwandte Arbeiten
+- Implementierung -> Tools, Umgebung, Womit wird gearbeitet
+- (Messungen +) Versuchsbeschreibung
+- Versuchsergebnis
+- Fazit -> Interpretation + Ausblick
+
+
+
+Dramaturgischer Bogen -> "Wie ein Roman"
+
 
 Table of Contents in your context (not finish version)
 
@@ -159,6 +177,10 @@ Experiments:
   - Syntethic Testdataset (maybe own 3xM Testdataset, but with unknown 3D-Models and Materials -> so that there is no influence from the novel-objects -> for all models the data are unknown, else for some there will be a subpart of materials and shapes known which leads to another influence)
   - Real Testdataset
   - Outlier-Data
+
+
+Einfluss:
+- Some Shapes and Materials are more comple than others, and so the choice of which of them will be choosen is important and could lead to another result. How big this influence really is is unclear but could be tested in future. Questionable is also if it is more benefitial to have more or less complex shapes and materials.
 
 
 ```
