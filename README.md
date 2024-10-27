@@ -51,6 +51,7 @@ or
 - ...
 
 
+
 ### Installation
 
 Ich empfehle es auf Linux zu installieren:
@@ -59,6 +60,15 @@ sudo apt update
 sudo apt install latexmk
 sudo apt install texlive-full
 sudo apt install texstudio
+sudo apt install biber
+```
+
+Erstelle deie Arbeit mit:
+```terminal
+pdflatex thesis
+biber thesis
+pdflatex thesis
+pdflatex thesis
 ```
 
 
