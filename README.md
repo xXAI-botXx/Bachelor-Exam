@@ -193,139 +193,6 @@ Einfluss:
 
 
 
-<!--
-Inhaltsverzeichnis V1:
-
-- Einleitung
-  - Problemstellung (Was ist gegeben? Was soll das Ergebnis sein? Warum/Wofür?)
-  - Instanzsegemntirung
-  - Bin-Picking
-  - Unbekannte Objekte -> Bedeutung, Grund
-  - Tiefenbilder (Was sind diese und warum -> mit Papern begründen)
-  - YOLACT?
-- Hauptteil
-  - Datengenerierung
-    - Synthetische Datengenerierung sinnvoll? (nimm Bezug auf Paper)
-    - Wie viele Daten? 
-    - Wie wichtig ist die Qualität? 
-    - Welche Daten werden benötigt?
-    - Wie wurden die Daten generiert?
-    - Erstellung welcher Datensätze?
-    - Vor- und Nachteile (Labeling, Qualität, ...)
-    - Ergebnis der Datengenerierung
-  - Instanzsegmentierung mit YOLACT
-    - Was wurde hier vorbereitet, gemacht?
-    - Mask RCNN?
-    - Training mit den Datensätzen
-    - Welche Model-Versionen werden analysiert
-  - Experiment: Reales Bin-Picking
-    - Aufbau des Experiments (es müssen neue/unbekannte Objekte sein, es muss objektiv bewertbar sein)
-    - Wie das Bin-Picking funktioniert
-    - Ergebnisse (ohne Wertung)
-      - Allgemeines Ergebnis des Bin-Pickings
-      - Ergebnis der Segmentierung an sich:
-        - Accuracy? 
-        - Bildvergleich
-        - ...
-  - Performance auf dem COCO-Datensatz -> hat dieser Tiefenbilder? Wenn nicht, ist er uninteressant
-    - Ergebnisse
-    - Warum sich der COCO-Datensatz nicht für Instanzsegmentierung eignet (evtl. Quellen hierfür?)
-  - Performance auf dem WISDOM-Datensatz 
-    - Warum WISDOM?
-    - Ergebnisse auf real
-    - Ergebnisse auf Synth
-  - Gibt es noch einen weiteren bekannten Tiefenbilddatensatz für Segmentierung?
-- Resumee (Vergleich)
-  - Wie sind die Ergebnisse zu deuten?
-  - Gab es einen signifikanten Unterschied?
-  - Warum könnten die Ergebnisse so sein, wie sie sind? Was könnte man daraus schlussfolgern?
-  - Hat das Sim-zu-Real geklappt?
-  - Welche offenen Fragen ergeben sich bzw. wären diesbezüglich noch interessant?
-
-
-
-
-```text
-Inhaltsverzeichnis V2:
-
-1. Hintergrund und Motivation
-    1.1 Problemstellung der Instance-Segmentierung im Bin-picking
-    1.2 Ziel und Relevanz der Untersuchung von Material- und 3D-Modellkombinationen
-    1.3 Aufbau der Arbeit
-
-2.Theoretische Grundlagen und Stand der Technik
-    2.1 Grundlagen der Instance-Segmentierung
-    2.1.1 Definition und Funktionsweise
-    2.1.2 Anwendungsfall: Bin-picking in der Robotik
-    2.2 Machine Learning und Deep Learning Algorithmen für die Segmentierung
-    2.2.1 Convolutional Neural Networks und ihre Rolle in der Segmentierung
-    2.3 YOLACT-Algorithmus
-    2.3.1 Architektur und Anpassungen für Bin-picking
-    2.3.2 Wrapper und Modifikationen für dieses Projekt
-    2.4 Unreal Engine 5 für synthetische Datengenerierung
-    2.4.1 Erstellung von 3D-Modelldaten
-    2.4.2 Automatisierte Materialgenerierung und -zuweisung
-
-3. Verwandte Arbeiten und Herausforderungen bei Sim-to-Real-Transfer
-    3.1 Stand der Forschung zu Material- und Formeinflüssen auf Segmentierungsalgorithmen
-    3.2 Herausforderungen beim Sim-to-Real Transfer in der Robotik
-    3.3 Relevante Datensätze und Benchmarks (z.B. OCID Dataset)
-
-4. Methodik zur Datenerstellung und Testung
-    4.1 Auswahl und Erstellung der 3D-Modelle
-    4.1.1 Manuelle Auswahl: Kriterien und Ausschluss von Modellen
-    4.1.2 Subjektive Unterscheidung in Form und Struktur
-    4.2 Materialfilterung mittels SSIM-Index
-    4.2.1 Vermeidung ähnlicher Materialien
-    4.2.2 Beispiele für gefilterte Materialien
-    4.3 Datensatzgenerierung mit Unreal Engine 5
-    4.3.1 Prozess zur Kombination von Materialien und Modellen
-    4.3.2 Faktoren zur Variierung im Datensatz
-    4.3.2.1 Anzahl der Objekte
-    4.3.2.2 Position der Objekte
-    4.3.2.3 Material der Bin-Box
-    4.3.2.4 Material des Bodens
-    4.3.2.5 Kameraposition
-
-5. Experimente und Testdesign
-    5.1 Überblick über die Datensätze
-    5.1.1 OCID-Datensatz: Evaluierung der Sim-to-Real-Fähigkeit
-    5.1.2 Synthetischer Datensatz: Generiert mit Unreal Engine 5
-    5.1.3 Grenzfalldatensatz: Untersuchung von Material- vs. Formabhängigkeit
-    5.2 Evaluationsmethoden
-    5.2.1 Mean Average Precision (mAP) und Intersection over Union (IoU)
-    5.2.2 Bias-Analyse: Shape-Bias vs. Material-Bias
-
-6. Ergebnisse und Diskussion
-    6.1 Ergebnisse der Sim-to-Real-Überprüfung
-    6.1.1 Leistung auf dem OCID-Datensatz
-    6.1.2 Sim-to-Real-Verluste und Herausforderungen
-    6.2 Ergebnisse auf synthetischen Datensätzen
-    6.2.1 Performance im Vergleich zwischen Unreal Engine 5 generierten Daten und Grenzfällen
-    6.3 Diskussion der Bias-Untersuchungen
-    6.3.1 Shape-Bias: Einfluss der Form auf die Genauigkeit
-    6.3.2 Material-Bias: Einfluss der Materialbeschaffenheit auf die Genauigkeit
-    6.4 Vergleich mit verwandten Arbeiten
-
-7. Fazit und Ausblick
-    7.1 Zusammenfassung der Ergebnisse und Implikationen
-    7.2 Beitrag der Arbeit zur Forschung im Bereich Bin-picking und Instance-Segmentierung
-    7.3 Ausblick auf zukünftige Arbeiten
-    7.3.1 Erweiterung der Datensätze
-    7.3.2 Optimierungspotential bei der Sim-to-Real-Übertragung
-
-8. Anhang
-    8.1 Quellcode des Unreal Engine Programms
-    8.2 Quellcode des YOLACT Wrappers und der Anpassungen
-    8.3 Zusätzliche Experimente und Analysen
-    8.4 Datensatzbeschreibung
-
-9. Literaturverzeichnis
-```
-
--->
-
-
 ### Namenskonvention
 
 - Shape = 3D-Model, Mesh = The 3D geometry of an object
@@ -401,9 +268,81 @@ Struktur:
 - Fazit
 
 
-### Quellen
+### Quellen & Fakten
 
-[Klicke hier, um die Zusammenfassungen zu sehen.](./Source.md)
+[Klicke hier, um meine Quellen und derren Zusammenfassungen zu sehen.](./Source.md)
+
+Fakten:
+- CNN-Methods lack to learn global information and prefers to learn local information 
+  - [Deep convolutional networks do not classify based on global object shape](./Source.md#deep-convolutional-networks-do-not-classify-based-on-global-object-shape)
+- CNN have an Texture bias 
+  - [Deep convolutional networks do not classify based on global object shape](./Source.md#deep-convolutional-networks-do-not-classify-based-on-global-object-shape)
+  - [ImageNet-trained CNNs are biased towards texture; increasing shape bias improves accuracy and robustness](./Source.md#imagenet-trained-cnns-are-biased-towards-texture-increasing-shape-bias-improves-accuracy-and-robustness)
+  - [Shape or Texture: Understanding Discriminative Features in CNNs](./Source.md#shape-or-texture-understanding-discriminative-features-in-cnns)
+  - [Trapped in Texture Bias? A Large Scale Comparison of Deep Instance Segmentation](./Source.md#trapped-in-texture-bias-a-large-scale-comparison-of-deep-instance-segmentation)
+- Depth Images are popular because the successfull sim-to-real
+  - [Segmenting Unknown 3D Objects from Real Depth Images using Mask R-CNN Trained on Synthetic Data](./Source.md#segmenting-unknown-3d-objects-from-real-depth-images-using-mask-r-cnn-trained-on-synthetic-data)
+- Recently RGB only data seams to have also an high performance performance
+  - [Bin-picking of novel objects through category-agnostic-segmentation: RGB matters](./Source.md#bin-picking-of-novel-objects-through-category-agnostic-segmentation-rgb-matters)
+- CNN's are only Texture Biased, because it is the more easy information
+  - [Towards Synthetic Data: Dealing with the Texture-Bias in Sim2real Learning](./Source.md#towards-synthetic-data-dealing-with-the-texture-bias-in-sim2real-learning)
+  - [A Competition of Shape and Texture Bias by Multi-view Image Representation](./Source.md#a-competition-of-shape-and-texture-bias-by-multi-view-image-representation)
+- Shape still playes a role in CNN's
+  - [Shape or Texture: Understanding Discriminative Features in CNNs](./Source.md#shape-or-texture-understanding-discriminative-features-in-cnns)
+  - [Towards Synthetic Data: Dealing with the Texture-Bias in Sim2real Learning](./Source.md#towards-synthetic-data-dealing-with-the-texture-bias-in-sim2real-learning)
+- High Resolution Textures helping bridging the gap of sim-to-real
+  - [Towards Synthetic Data: Dealing with the Texture-Bias in Sim2real Learning](./Source.md#towards-synthetic-data-dealing-with-the-texture-bias-in-sim2real-learning)
+- Texture Bias alone can't explain the generalization of a model
+  - [Can Biases in ImageNet Models Explain Generalization?](./Source.md#can-biases-in-imagenet-models-explain-generalization)
+  - [Harnessing Synthetic Datasets: The Role of Shape Bias in Deep Neural Network Generalization](./Source.md#harnessing-synthetic-datasets-the-role-of-shape-bias-in-deep-neural-network-generalization)
+- Texture Bias come also from the data itself
+  - [The Origins and Prevalence of Texture Bias in Convolutional Neural Networks](./Source.md#the-origins-and-prevalence-of-texture-bias-in-convolutional-neural-networks)
+- Shape-Bias increase the performance of deep learning models
+  - [The Origins and Prevalence of Texture Bias in Convolutional Neural Networks](./Source.md#the-origins-and-prevalence-of-texture-bias-in-convolutional-neural-networks)
+- In OOD (Out of Distribution) datasets, shape bias is not always better
+  - [Shape-biased CNNs are Not Always Superior in Out-of-Distribution Robustness](./Source.md#shape-biased-cnns-are-not-always-superior-in-out-of-distribution-robustness)
+- Shape-Texture debiased models have a higher accuracy
+  - [SHAPE-TEXTURE DEBIASED NEURAL NETWORK TRAINING](./Source.md#shape-texture-debiased-neural-network-training)
+- The combination of shape biased and texture biased models leads to better results (with ensemble method)
+  - [UNIVERSAL ADVERSARIAL ROBUSTNESS OF TEXTURE AND SHAPE-BIASED MODELS](./Source.md#universal-adversarial-robustness-of-texture-and-shape-biased-models)
+  - [Shape Prior is Not All You Need: Discovering Balance Between Texture and Shape Bias in CNN](./Source.md#shape-prior-is-not-all-you-need-discovering-balance-between-texture-and-shape-bias-in-cnn)
+  -> it is another approach to mine
+- Data causes Texture bias
+  - [A Competition of Shape and Texture Bias by Multi-view Image Representation](./Source.md#a-competition-of-shape-and-texture-bias-by-multi-view-image-representation)
+- Mask-RCNN is still a very well performaning instance-segmention method
+- Reducing Texture Bias can be helpful
+  - [On the Texture Bias for Few-Shot CNN Segmentation](./Source.md#on-the-texture-bias-for-few-shot-cnn-segmentation)
+- Not the Shape-Complexity is important, else the combination of shape and color is very important for good results and learning
+  - [On the Influence of Shape, Texture and Color for Learning Semantic Segmentation](./Source.md#on-the-influence-of-shape-texture-and-color-for-learning-semantic-segmentation)
+- Depth Images are improving segmentation
+  - [Benchmarking of deep learning algorithms for 3D instance segmentation of confocal image datasets](./Source.md#benchmarking-of-deep-learning-algorithms-for-3d-instance-segmentation-of-confocal-image-datasets)
+  - [Exploiting Depth Information for Wildlife Monitoring](./Source.md#exploiting-depth-information-for-wildlife-monitoring)
+  - [Depth-aware object instance segmentation]()
+- Instance Segmentation is widely used
+- Synthetic Data is very promising for depp learning
+  - [Driving in the Matrix: Can Virtual Worlds Replace Human-Generated Annotations for Real World Tasks?](./Source.md#driving-in-the-matrix-can-virtual-worlds-replace-human-generated-annotations-for-real-world-tasks)
+  - [The SYNTHIA Dataset: A Large Collection of Synthetic Images for Semantic Segmentation of Urban Scenes](./Source.md#the-synthia-dataset-a-large-collection-of-synthetic-images-for-semantic-segmentation-of-urban-scenes)
+- Synthetic Data has often also a lack of quality
+  - [Harnessing Synthetic Datasets: The Role of Shape Bias in Deep Neural Network Generalization](./Source.md#harnessing-synthetic-datasets-the-role-of-shape-bias-in-deep-neural-network-generalization)
+- Data Augmentation does improve the performance and the ability for generalization
+  - [Data Augmentation in Classification and Segmentation: A Survey and New Strategies](./Source.md#data-augmentation-in-classification-and-segmentation-a-survey-and-new-strategies)
+  - [Image- and Instance-Level Data Augmentation for Occluded Instance Segmentation](./Source.md#image--and-instance-level-data-augmentation-for-occluded-instance-segmentation) -> helpful for not much data, which is a common problem in the field of instance segmentation
+  - [Data Augmentation Methods for Semantic Segmentation-based Mobile Robot Perception System](./Source.md#data-augmentation-methods-for-semantic-segmentation-based-mobile-robot-perception-system)
+  - [Data augmentation: A comprehensive survey of modern approaches](./Source.md#data-augmentation-a-comprehensive-survey-of-modern-approaches)
+  - [Performance improvement of Deep Learning Models using image augmentation techniques](./Source.md#performance-improvement-of-deep-learning-models-using-image-augmentation-techniques)
+  - [The impact of data augmentation and transfer learning on the performance of deep learning models for the segmentation of the hip on 3D magnetic resonance images](./Source.md#the-impact-of-data-augmentation-and-transfer-learning-on-the-performance-of-deep-learning-models-for-the-segmentation-of-the-hip-on-3d-magnetic-resonance-images)
+- Collecting high quality annotated data is difficult
+  - [Data augmentation: A comprehensive survey of modern approaches](./Source.md#data-augmentation-a-comprehensive-survey-of-modern-approaches)
+  - [Image- and Instance-Level Data Augmentation for Occluded Instance Segmentation](./Source.md#image--and-instance-level-data-augmentation-for-occluded-instance-segmentation)
+- using Unreal Engine for generating synth data
+  - [UnrealROX: an extremely photorealistic virtual reality environment for robotics simulations and synthetic data generation](./Source.md#unrealrox-an-extremely-photorealistic-virtual-reality-environment-for-robotics-simulations-and-synthetic-data-generation)
+  - [UnrealGT: Using Unreal Engine to Generate Ground Truth Datasets](./Source.md#unrealgt-using-unreal-engine-to-generate-ground-truth-datasets)
+  - [Experimental Results on Synthetic Data Generation in Unreal Engine 5 for Real-World Object Detection](./Source.md#experimental-results-on-synthetic-data-generation-in-unreal-engine-5-for-real-world-object-detection)
+  - [Development of a Novel Object Detection System Based on Synthetic Data Generated from Unreal Game Engine](./Source.md#development-of-a-novel-object-detection-system-based-on-synthetic-data-generated-from-unreal-game-engine)
+
+
+FIXME
+
 
 
 ### Weiteres
