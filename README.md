@@ -125,6 +125,48 @@ Trainingsdaten sind im Bereich Deep-Learning immer eines der größten Herausfor
 
 ### Inhaltsverzeichnis
 
+**Table of Contents**
+
+1. **Cover Page**
+
+2. **Preface**
+
+3. **Abstract**
+
+4. **Introduction**  
+    - **Objective and Importance** 
+    - **Research Gap and Specific Focus**   
+    - **Methodology Overview**  
+    - **Scope and Delimitations** 
+    - **Key Definitions**  
+    - **Structure**
+
+5. **Research Background and Hypothesis**  
+    - **State of the Art**  
+    - **Related Work**  
+ - **Hypothesis Statement** 
+
+6. **Methodology and Implementation**  
+    - **Tools and Environment**
+    - **AI Model**
+    - **Data Generation**  
+
+
+7. **Experiment Setup and Description**  
+    - **Experiment Design** 
+    - **Evaluation Metrics** 
+
+8. **Results**
+
+9. **Discussion**  
+    - **Interpretation of Results**  
+    - **Limitations and Challenges**
+
+10. **Conclusion**  
+    - **Summary of Findings**  
+    - **Implications and Future Work**
+
+<!-- 
 > Klassische Begriffe, wie Einleitung bitte spzifizieren und ersetzen + der Leser sollte Wissen können was ihn grob erwartet
 > Vom Überthema zum Unterthema sollte sich immer mehr relevante Details binhaltet sein 
 
@@ -157,13 +199,13 @@ Inhaltsverzeichnis verbessert: -> etwa 10 Seiten pro Kapitel (außer Fazit)
 - Implementierung -> Tools, Umgebung, Womit wird gearbeitet
 - (Messungen +) Versuchsbeschreibung
 - Versuchsergebnis
-- Fazit -> Interpretation + Ausblick
+- Fazit -> Interpretation + Ausblick -->
 
 
 
 Dramaturgischer Bogen -> "Wie ein Roman"
 
-
+<!--
 Table of Contents in your context (not finish version)
 
 Scientific Question: 
@@ -201,7 +243,7 @@ Einfluss:
 
 ```
 
-
+-->
 
 ### Namenskonvention
 
