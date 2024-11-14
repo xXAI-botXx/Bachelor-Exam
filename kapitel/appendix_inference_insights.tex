@@ -1,0 +1,407 @@
+\chapter{Inference Insights}
+\label{appendix:inference-insights}
+
+	This appendix will show one example inference with outputs from every layer. The visualizations are only samples because there would be too many outputs. At the end of this appendix, there will be the essential code to hook the in-between outputs and how to visualize them.\\
+	First presented is the input image.
+	
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=\textwidth]{anhang/insights/Insight_3xM_10000_10_80.png}
+		\caption[Insight Inference Input]{Insight Inference Input}
+	\end{figure}
+	\FloatBarrier
+	
+	\clearpage
+	The first output in Mask R-CNN comes from ResNet. ResNet extracts features from the image; thus, it is called the backbone of Mask R-CNN.
+	
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=\textwidth]{anhang/insights/3xM_10000_10_80_01_resnet_layer1_conv1.jpg}
+		\caption[ResNet Layer 1 Convolution 1 Output]{ResNet Layer 1 Convolution 1 Output}
+	\end{figure}
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=\textwidth]{anhang/insights/3xM_10000_10_80_02_resnet_layer1_conv2.jpg}
+		\caption[ResNet Layer 1 Convolution 2 Output]{ResNet Layer 1 Convolution 2 Output}
+	\end{figure}
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=\textwidth]{anhang/insights/3xM_10000_10_80_03_resnet_layer1_conv3.jpg}
+		\caption[ResNet Layer 1 Convolution 3 Output]{ResNet Layer 1 Convolution 3 Output}
+	\end{figure}
+	
+	
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=\textwidth]{anhang/insights/3xM_10000_10_80_04_resnet_layer2_conv1.jpg}
+		\caption[ResNet Layer 2 Convolution 1 Output]{ResNet Layer 2 Convolution 1 Output}
+	\end{figure}
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=\textwidth]{anhang/insights/3xM_10000_10_80_05_resnet_layer2_conv2.jpg}
+		\caption[ResNet Layer 2 Convolution 2 Output]{ResNet Layer 2 Convolution 2 Output}
+	\end{figure}
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=\textwidth]{anhang/insights/3xM_10000_10_80_06_resnet_layer2_conv3.jpg}
+		\caption[ResNet Layer 2 Convolution 3 Output]{ResNet Layer 2 Convolution 3 Output}
+	\end{figure}
+	
+	
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=\textwidth]{anhang/insights/3xM_10000_10_80_07_resnet_layer3_conv1.jpg}
+		\caption[ResNet Layer 3 Convolution 1 Output]{ResNet Layer 3 Convolution 1 Output}
+	\end{figure}
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=\textwidth]{anhang/insights/3xM_10000_10_80_08_resnet_layer3_conv2.jpg}
+		\caption[ResNet Layer 3 Convolution 2 Output]{ResNet Layer 3 Convolution 2 Output}
+	\end{figure}
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=\textwidth]{anhang/insights/3xM_10000_10_80_09_resnet_layer3_conv3.jpg}
+		\caption[ResNet Layer 3 Convolution 3 Output]{ResNet Layer 3 Convolution 3 Output}
+	\end{figure}
+	
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=\textwidth]{anhang/insights/3xM_10000_10_80_10_resnet_layer4_conv1.jpg}
+		\caption[ResNet Layer 4 Convolution 1 Output]{ResNet Layer 4 Convolution 1 Output}
+	\end{figure}
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=\textwidth]{anhang/insights/3xM_10000_10_80_11_resnet_layer4_conv2.jpg}
+		\caption[ResNet Layer 4 Convolution 2 Output]{ResNet Layer 4 Convolution 2 Output}
+	\end{figure}
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=\textwidth]{anhang/insights/3xM_10000_10_80_12_resnet_layer4_conv3.jpg}
+		\caption[ResNet Layer 4 Convolution 3 Output]{ResNet Layer 4 Convolution 3 Output}
+	\end{figure}
+	
+	
+	\FloatBarrier
+	\clearpage
+	
+	After the ResNet comes the \ac{fpn}. The created feature maps from ResNet will be used on different levels to extract extra output. First, it takes the outputs from ResNet, extracts feature maps from the feature maps, and creates different feature maps on different resolution levels called lateral layers.
+	
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=\textwidth]{anhang/insights/3xM_10000_10_80_19_fpn_lateral_layer4.jpg}
+		\caption[\ac{fpn} lateral layer of ResNet Layer 4]{\ac{fpn} lateral layer of ResNet Layer 4}
+	\end{figure}
+	
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=\textwidth]{anhang/insights/3xM_10000_10_80_21_fpn_lateral_layer3.jpg}
+		\caption[\ac{fpn} lateral layer of ResNet Layer 3]{\ac{fpn} lateral layer of ResNet Layer 3}
+	\end{figure}
+	
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=\textwidth]{anhang/insights/3xM_10000_10_80_23_fpn_lateral_layer2.jpg}
+		\caption[\ac{fpn} lateral layer of ResNet Layer 2]{\ac{fpn} lateral layer of ResNet Layer 2}
+	\end{figure}
+	
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=\textwidth]{anhang/insights/3xM_10000_10_80_25_fpn_lateral_layer1.jpg}
+		\caption[\ac{fpn} lateral layer of ResNet Layer 1]{\ac{fpn} lateral layer of ResNet Layer 1}
+	\end{figure}
+	
+	\FloatBarrier
+	\clearpage
+	The \ac{fpn} uses these feature maps to create the final feature maps on different resolution levels and combines features from different levels.
+	
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=\textwidth]{anhang/insights/3xM_10000_10_80_20_fpn_output_layer4.jpg}
+		\caption[\ac{fpn} output layer of ResNet Layer 4]{\ac{fpn} output layer of ResNet Layer 4}
+	\end{figure}
+	
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=\textwidth]{anhang/insights/3xM_10000_10_80_22_fpn_output_layer3.jpg}
+		\caption[\ac{fpn} output layer of ResNet Layer 3]{\ac{fpn} output layer of ResNet Layer 3}
+	\end{figure}
+	
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=\textwidth]{anhang/insights/3xM_10000_10_80_24_fpn_output_layer2.jpg}
+		\caption[\ac{fpn} output layer of ResNet Layer 2]{\ac{fpn} output layer of ResNet Layer 2}
+	\end{figure}
+	
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=\textwidth]{anhang/insights/3xM_10000_10_80_26_fpn_output_layer1.jpg}
+		\caption[\ac{fpn} output layer of ResNet Layer 1]{\ac{fpn} output layer of ResNet Layer 1}
+	\end{figure}
+	
+	
+	\FloatBarrier
+	
+	\clearpage
+	Afterward, creating feature maps, the \ac{rpn} localizes object proposals and uses \ac{nms} to remove redundant proposals.\\
+	The \ac{rpn} head first uses the feature maps to prepare for object detection and creating proposals, areas within potential objects.\\
+	The \ac{rpn} object classification predicts whether a proposal contains an object.\\
+	The \ac{rpn} bounding box predictor defines a bounding box for every proposal. The outputs are \ac{roi}s.
+	
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.9\textwidth]{anhang/insights/3xM_10000_10_80_27_rpn_head_conv.jpg}
+		\caption[\ac{rpn} head convolution. One example Proposal.]{\ac{rpn} head convolution. One example Proposal.}
+	\end{figure}
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.9\textwidth]{anhang/insights/3xM_10000_10_80_28_rpn_cls_logits.jpg}
+		\caption[\ac{rpn} object classification for one example Proposal]{\ac{rpn} object classification for one example Proposal}
+	\end{figure}
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.9\textwidth]{anhang/insights/3xM_10000_10_80_29_rpn_bbox_pred.jpg}
+		\caption[\ac{rpn} bounding box prediction for one example Proposal]{\ac{rpn} bounding box prediction for one example Proposal}
+	\end{figure}
+	
+	
+	\FloatBarrier
+	
+	It follows the \ac{roi}-align, where the \ac{roi}s from \ac{rpn} are getting resized.
+	
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=\textwidth]{anhang/insights/3xM_10000_10_80_30_roi_box_pool.jpg}
+		\caption[\ac{roi}-align for three example \ac{roi}s]{\ac{roi}-align for three example \ac{roi}s}
+	\end{figure}
+	
+	\FloatBarrier
+	\clearpage
+	At last, the masks get prepared (refined) by the mask head and then get predicted \ac{roi}-wise.
+	
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=\textwidth]{anhang/insights/3xM_10000_10_80_35_mask_head_conv1.jpg}
+		\caption[The mask head uses the standardized \ac{roi}s and refines them for mask prediction]{The mask head uses the standardized \ac{roi}s and refines them for mask prediction}
+	\end{figure}
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=\textwidth]{anhang/insights/3xM_10000_10_80_36_mask_predictor_fcn.jpg}
+		\caption[The mask predictor predicts the masks for every polished \ac{roi}]{The mask predictor predicts the masks for every polished \ac{roi}}
+	\end{figure}
+	
+	\FloatBarrier
+	
+	Hint: The bounding box refinement and object classification are also included at the end, but this insight wanted to focus on mask creation.
+	
+	
+	Following code collect and visualize these fascinating insights.
+
+	\begin{lstlisting}[language=Python,caption=Hooking insight informations from Mask R-CNN, label=lst:inference-insight]
+DNN_INSIGHTS = {}
+
+def hook_func(module, input, output, name):
+		try:
+				DNN_INSIGHTS[name] = {
+						'output': output.detach().cpu()
+				}
+		except AttributeError as e:
+				print(f"Error: {e} Data: {input}")
+
+def register_maskrcnn_hooks(model):
+		################
+		# ResNet hooks #
+		################
+		model.backbone.body.layer1[0].conv1.register_forward_hook(
+				lambda m, i, o: hook_func(m, i, o, 'resnet_layer1_conv1')
+		)
+		
+		model.backbone.body.layer1[0].conv2.register_forward_hook(
+				lambda m, i, o: hook_func(m, i, o, 'resnet_layer1_conv2')
+		)
+		
+		model.backbone.body.layer1[0].conv3.register_forward_hook(
+				lambda m, i, o: hook_func(m, i, o, 'resnet_layer1_conv3')
+		)
+		
+		model.backbone.body.layer2[0].conv1.register_forward_hook(
+				lambda m, i, o: hook_func(m, i, o, 'resnet_layer2_conv1')
+		)
+		
+		model.backbone.body.layer2[0].conv2.register_forward_hook(
+				lambda m, i, o: hook_func(m, i, o, 'resnet_layer2_conv2')
+		)
+		
+		model.backbone.body.layer2[0].conv3.register_forward_hook(
+				lambda m, i, o: hook_func(m, i, o, 'resnet_layer2_conv3')
+		)
+		
+		model.backbone.body.layer3[0].conv1.register_forward_hook(
+				lambda m, i, o: hook_func(m, i, o, 'resnet_layer3_conv1')
+		)
+		
+		model.backbone.body.layer3[0].conv2.register_forward_hook(
+				lambda m, i, o: hook_func(m, i, o, 'resnet_layer3_conv2')
+		)
+		
+		model.backbone.body.layer3[0].conv3.register_forward_hook(
+				lambda m, i, o: hook_func(m, i, o, 'resnet_layer3_conv3')
+		)
+		
+		model.backbone.body.layer4[0].conv1.register_forward_hook(
+				lambda m, i, o: hook_func(m, i, o, 'resnet_layer4_conv1')
+		)
+		
+		model.backbone.body.layer4[0].conv2.register_forward_hook(
+				lambda m, i, o: hook_func(m, i, o, 'resnet_layer4_conv2')
+		)
+		
+		model.backbone.body.layer4[0].conv3.register_forward_hook(
+				lambda m, i, o: hook_func(m, i, o, 'resnet_layer4_conv3')
+		)
+		
+		#######################################
+		# Feature Pyramid Network (FPN) hooks #
+		#######################################
+		model.backbone.fpn.inner_blocks[0].register_forward_hook(
+				lambda m, i, o: hook_func(m, i, o, 'fpn_lateral_layer1')
+		)
+		
+		model.backbone.fpn.inner_blocks[1].register_forward_hook(
+				lambda m, i, o: hook_func(m, i, o, 'fpn_lateral_layer2')
+		)
+		
+		model.backbone.fpn.inner_blocks[2].register_forward_hook(
+				lambda m, i, o: hook_func(m, i, o, 'fpn_lateral_layer3')
+		)
+		
+		model.backbone.fpn.inner_blocks[3].register_forward_hook(
+				lambda m, i, o: hook_func(m, i, o, 'fpn_lateral_layer4')
+		)
+		
+		model.backbone.fpn.layer_blocks[0].register_forward_hook(
+				lambda m, i, o: hook_func(m, i, o, 'fpn_output_layer1')
+		)
+		
+		model.backbone.fpn.layer_blocks[1].register_forward_hook(
+				lambda m, i, o: hook_func(m, i, o, 'fpn_output_layer2')
+		)
+		
+		model.backbone.fpn.layer_blocks[2].register_forward_hook(
+				lambda m, i, o: hook_func(m, i, o, 'fpn_output_layer3')
+		)
+		
+		model.backbone.fpn.layer_blocks[3].register_forward_hook(
+				lambda m, i, o: hook_func(m, i, o, 'fpn_output_layer4')
+		)
+		
+		
+		#######################################
+		# Region Proposal Network (RPN) hooks #
+		#######################################
+		model.rpn.head.conv.register_forward_hook(
+				lambda m, i, o: hook_func(m, i, o, 'rpn_head_conv')
+		)
+		
+		model.rpn.head.cls_logits.register_forward_hook(
+				lambda m, i, o: hook_func(m, i, o, 'rpn_cls_logits')
+		)
+		
+		model.rpn.head.bbox_pred.register_forward_hook(
+				lambda m, i, o: hook_func(m, i, o, 'rpn_bbox_pred')
+		)
+		
+		###################
+		# RoI Align hooks #
+		###################
+		model.roi_heads.box_roi_pool.register_forward_hook(
+				lambda m, i, o: hook_func(m, i, o, 'roi_box_pool')
+		)
+		
+		#############
+		# Mask Head #
+		#############
+		model.roi_heads.mask_head[0].register_forward_hook(
+				lambda m, i, o: hook_func(m, i, o, 'mask_head_conv1')
+		)
+		
+		model.roi_heads.mask_predictor.mask_fcn_logits.register_forward_hook(
+				lambda m, i, o: hook_func(m, i, o, 'mask_predictor_fcn_logits')
+		)
+
+
+
+
+def plot_feature_map(tensor, should_save, save_path, should_show, title="Feature Map"):
+		if len(tensor.shape) == 4:
+				num_cols = min(tensor.size()[0], 3)
+				num_rows = min(tensor.size()[1], 1)
+				
+				if num_rows > num_cols:
+						num_rows = num_cols
+				
+				fig, all_ax = plt.subplots(num_rows, num_cols, figsize=(15, 10))
+				
+				
+				
+				
+				
+				for cur_col in range(num_cols):
+						for cur_row in range(num_rows):
+								feature_map_index_1 = cur_col
+								feature_map_index_2 = cur_row
+								
+								if "mask_predictor" in title:
+								title = title.replace("_logits", "")
+								feature_map_index_1 = feature_map_index_1
+								feature_map_index_2 = feature_map_index_2+1
+								
+								# Extract the feature map for the ith sample
+								cur_image = tensor[feature_map_index_1, feature_map_index_2].detach().cpu().numpy()  # Select channel 0, detach from graph
+								
+								if num_cols > 1 and num_rows == 1:
+										ax = all_ax[cur_col]
+								elif num_cols == 1 and num_rows == 1:
+										ax = all_ax
+								elif num_cols == 1 and num_rows > 1:
+										ax = all_ax[cur_row]
+								elif num_cols > 1 and num_rows > 1:
+										ax = all_ax[cur_row][cur_col]
+								else:
+										raise Exception(f"Error during col: {cur_col}, row: {cur_row}")
+								
+								ax.imshow(cur_image, cmap='viridis')
+								ax.set_title(f'{title} {cur_col+1} {cur_row+1}')
+								ax.axis('off')
+		elif len(tensor.shape) == 2:
+				plot_image = tensor.cpu().numpy()
+				plt.figure(figsize=(15, 10))
+				plt.imshow(plot_image, cmap='viridis')
+				plt.title(title)
+				plt.axis('off')
+		else:
+				raise ValueException(f"Tensor with shape: {tensor.shape} can't be plottet.")
+		
+		
+		if should_save:
+				plt.savefig(os.path.join(save_path, f"{title}.jpg"))
+		
+		if should_show:
+				plt.show()
+		
+		plt.axis('off')
+		plt.clf()
+		plt.close()
+
+
+def visualize_insights(insights, should_save, save_path, name, should_show, max_aspect_ratio=5.0, max_cols=3, channel_limit=3, batch_limit=1):
+		counter = 1
+		for layer_name, data in insights.items():
+				try:
+						plot_feature_map(data['output'], should_save, save_path, should_show, title=f"{name}_{counter:02}_{layer_name}")
+				except Exception as e:
+						print(f"Error during insight visualization of: {layer_name} with error: {e} and tensor: {data['output'].size()}")
+				counter += 1
+	\end{lstlisting}
+	
+
+

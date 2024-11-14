@@ -34,8 +34,8 @@
 	
 	\section{Methodology Overview}
 	\label{sec:methodology-overview}
-		This work trained 18 different Mask-RCNN \cite{Kaiming2017} models on synthetic, in unreal engine \cite{Romero2022} created datasets, each with 20.000 RGB-, depth- and mask-images. The different shapes and textures vary between the datasets. Also, the models can only have RGB or RGB-depth as input data.\\
-		With these 18 \ac{dnn}'s, three different studies were performed for generalization, shape-texture bias, and sim-to-real transfer.\\
+		This work trained 18 different Mask R-CNN \cite{Kaiming2017} models on synthetic, in unreal engine \cite{Romero2022} created datasets, each with 20.000 RGB-, depth- and mask-images. The different shapes and textures vary between the datasets. Also, the models can only have RGB or RGB-depth as input data.\\
+		With these 18 \ac{dnn}s, three different studies were performed for generalization, shape-texture bias, and sim-to-real transfer.\\
 		A few outlier data shows, if the \ac{dnn} learned to prefer shape or texture.\\
 		A small Test dataset with a structured combination of novel and known shapes and textures is proposed to test the generalization of shape and texture.\\
 		Finally, an existing real-world dataset, for instance segmentation, is used to see the sim-to-real performance.
@@ -44,18 +44,21 @@
 	
 	\section{Scope and Delimitations}
 	\label{sec:scope-and-delimitations}
-		Investigating generalization, shape-texture bias, and sim-to-real transfer with a focus on depth data and shape-texture quantity must come with a reduced scope and with delimitations. Otherwise, it would be an excess of work. Furthermore, some delimitation is needed, thus keeping the influencing factors as small as possible.\\
-		First, only Mask-RCNN \cite{Kaiming2017} is used as \ac{dnn}, because many assumptions are made on top of research for \ac{cnn}-based approaches.\\
-		Moreover all used \ac{dnn}'s are trained on the same type of datasets, where only the objects' shape, texture, and position varies.\\
-		Both named delimitations are important in order to be able to exclude influences with certainty. Another \ac{dnn} architecture can differ in bias, robustness and learning. Mask-RCNN wide range of use, distribution and flexibility made it a good choice as \ac{dnn} for this study.\\
-		For the same reason, every \ac{dnn} used the same hyper-parameters for training. Even if there are better parameters, these parameters must be consistently equal during the studies, to eliminate an possible influence.\\
+		Investigating generalization, shape-texture bias, and sim-to-real transfer with a focus on depth data and shape-texture quantity must come with reduced scope and delimitations. Otherwise, it would be an excess of work. Furthermore, some delimitation is needed, thus keeping the influencing factors as small as possible.\\
+		First, only Mask R-CNN \cite{Kaiming2017} is used as \ac{dnn} because many assumptions are made on top of research for \ac{cnn}-based approaches.\\
+		Moreover, all used \ac{dnn}s are trained on the same type of datasets, where only the objects' shape, texture, and position vary.\\
+		Both named delimitations are important in excluding influences with certainty. Another \ac{dnn} architecture can differ in bias, accuracy, and learning. Mask R-CNN's wide range of use, distribution, and flexibility made it a good choice as \ac{dnn} for this study.\\
+		For the same reason, every \ac{dnn} used the same hyper-parameters for training. Even if there are better parameters, these parameters must be consistently equal during the studies to eliminate a possible influence.\\
 		This work focuses primarily on instance segmentation for bin-picking. Which is a common task of instance segmentation and important for automation\cite{Raj2023}\cite{Danielczuk2019}\cite{Xie2021}. However, the research should be valid and vital for every instance of the segmentation approach.\\
-		Another delimitation is the choice of different shapes and textures. The difference is difficult to measure. There are some methods, like the structural similarity index measure \cite{Wang2004}, but it is not a standard approach. In the end, a subjective choice was applied due to some misclassifications that were misclassified using objective methods.
+		Another delimitation is the choice of different shapes and textures. The difference is difficult to measure. There are some methods, like the structural similarity index measure \cite{Wang2004}, but it is not a standard approach. In the end, a subjective choice was applied due to some misclassifications using objective methods.
 		\\
 		Due to the amount of studies and time limitations, a limited test-data size is given.\\
-		These studies can find indications and chances, while an underlying truth cannot be provided. Again, this is owed to the complexity and dimension of this research.\\
-		Next up, the number of different shapes and textures used is limited to a maximum of 160. This is justified by the rare availability of high-quality shapes and textures.\\
-		Lastly, this study needs to meet the assumption of not finding novel knowledge. This study tries to reinforce or question current state-of-the-art research to find practical results. On a broader context, that could provide valuable insights. Through the wide research question, a profound look is not possible.
+		This study can find indications and chances, while an underlying truth cannot be provided. Again, this is owed to the complexity and dimension of this research.\\
+		Also, due to time limitations, a suboptimal number of epochs was chosen. More epochs would lead to even better results, but the experiments should not be influenced by the extra precision; still, it is a limitation.
+		Next up, the number of different shapes and textures used is limited to a maximum of 160. The rare availability of high-quality shapes and textures justifies this.\\
+		The usage of depth information also comes with delimitations. There are many ways to use depth information, as described in section \ref{sec:state-of-the-art}, but this study can only approach one way to use depth, or else the amount of \ac{dnn} and training would rise too vast. This study uses the straightforward approach of adding a fourth channel with depth information.\\
+		Synthetic data often comes with quality issues, and this work's proposed datasets are not different. There are some major downsides which should be considered. The render quality should be higher than it is because of the method used to render and save. The spawning objects can also spawn into each other, sometimes leading to unfavorable data. \\
+		Lastly, this study needs to meet the assumption that it will not find novel knowledge. This study tries to reinforce or question current state-of-the-art research to find practical results. In a broader context, that could provide valuable insights. A profound look is not possible through the wide research question.
 	
 	
 	
@@ -66,9 +69,9 @@
 		\\
 		\textbf{Instance Segmentation:} Instance Segmentation is the task of finding and labeling every foreground object in an image pixel-wise. The classification of these objects is optional and plays no role in the segmentation.\\
 		\textbf{Bin Picking:} During bin picking, a robot tries to grasp an object from a bin and uses or transports it to another place. Instance Segmentation is needed in bin picking to find all available objects in the bin.\\
-		\textbf{Texture:} Texture is an object's visual appearance and pattern. This word is significant. Thus, it is part of the investigation. An object can have the texture of a rock, water, salt, skin, piece of wood, steel beam, and much more.\\
+		\textbf{Texture:} Texture is an object's visual appearance and pattern. This word is significant. Thus, it is part of the investigation. An object can have the texture of a rock, water, salt, skin, piece of wood, steel beam, and much more. A texture is local information. It describes specific areas on a detailed level and does not describe the overall shape of an object.\\
 		\textbf{Material:} A material describes the physical properties of an object, like color, metalness, roughness, and the height of the surface. If a picture is taken of an object that has a material, on the picture, the texture of the object is visible, which is defined by its material. The properties of a material can be described as single number values or, for more complexity, as a bump map (image).\\
-		\textbf{Shape:} A Shape defines the geometry of an object. It is also often referred to as mesh or 3D-model. Simple shapes are spheres and rectangles.\\
+		\textbf{Shape:} A Shape defines the geometry of an object. It is also often referred to as mesh or 3D-model. Simple shapes are spheres and rectangles. A shape is global information. It defines the boundaries of an object and is only available in the broader view.\\
 		\textbf{Depth data:} As depth mentioned, data are images that contain information about the distance from every object. The images have only one channel. Every pixel value states how far or near the given pixel in reality to the camera was/is.\\
 		\textbf{Novel Objects:} Novel objects are objects that were not part of the \ac{dnn}'s training. Novel objects are a typical challenge for bin-picking since there are often unique and innovative products in production and automation pipelines.\\
 		\textbf{Out of distribution data:} Data which differs essentially from the train data of a \ac{dnn}. A new domain with a completely different background, resolution, quality, and quantity is a \ac{ood} data.\\
