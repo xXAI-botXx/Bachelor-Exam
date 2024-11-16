@@ -1,10 +1,10 @@
 \chapter{Experiment Setup and Description}
 \label{chap:kapitel4}
 
-	All three, here covered, experiments are needed to answer the three hypotheses from \ref{sec:hypothesis-statement}. The relation is not: one experiment for one hypothesis. Multiple experiments are needed to answer one hypothesis.\\
+	All three here covered experiments are needed to answer the three hypotheses from \ref{sec:hypothesis-statement}. The relation is not one experiment for one hypothesis. Multiple experiments are needed to answer one hypothesis.\\
 	18 different \acl{dnn} are used in the three experiments. Every \ac{dnn} shares the same training conditions and only differ in the used train data.\\
-	9 \ac{dnn}s with only RGB data and 9 with RGB and depth data. The 9 datasets have different object compositions and major difference are the shapes and textures in the images. There are datasets with 10, 80 and 160 shapes and textures. All combinations yield in 9 datasets.\\
-	It follows a listing of training conditions which keep the same over all trained networks in this work:
+	9 \ac{dnn}s with only RGB data and 9 with RGB and depth data. The nine datasets have different object compositions; the major difference is the shapes and textures in the images. There are datasets with 10, 80, and 160 shapes and textures. All combinations yield in 9 datasets.\\
+	It follows a listing of training conditions that keep the same overall trained networks in this work:
 	\begin{itemize}
 		\item \textbf{\ac{dnn}:} Mask R-CNN from torchvision
 		\item \textbf{Epochs:} 50
@@ -12,8 +12,8 @@
 		\item \textbf{Width and height:} 1920 x 1080
 		\item \textbf{Warm-up iterations:} 2000
 		\item \textbf{Learning rate:} 0.003
-		\item \textbf{Scheduler:} Simple custom scheduler with warm-up and down regulation
-		\item \textbf{Optimizer:} \acl{sgd} with nesterov momentum \cite{Botev2016}
+		\item \textbf{Scheduler:} Simple custom scheduler with warm-up and down-regulation
+		\item \textbf{Optimizer:} \acl{sgd} with Nesterov momentum \cite{Botev2016}
 		\item \textbf{Momentum:} 0.9
 		\item \textbf{Batch size:} 5
 		\item \textbf{Shuffle data:} True
@@ -31,13 +31,13 @@
 		% The experiment is still influenced by the fact that \ac{dnn} does not only use one of them to make their decision.
 		The 20 tests include five images with known shapes and known textures, five with unknown shapes and known textures, five with known shapes and unknown textures, and five with unknown shapes and unknown textures. This combination of known and unknown shapes and textures can help to get more insights and understanding. For example, it could be that a \ac{dnn} has a bias towards texture but also learned some shape information without enough generalization caused by the texture bias.\\
 		It is expected that there is a texture bias by the \ac{dnn} trained on only RGB data due to research \cite{Theodoridis2022}. Thus, the created masks should focus on the texture. \\
-		The \ac{dnn} trained on RGB with depth are expected to have a slight bias towards shape since the depth data keeps only shape information. The fact that there is more shape information does not necessarily mean that the \ac{dnn} will favor this kind of information or use this information more than without depth data. Nevertheless, the shape information is more accessible with a fourth depth channel, and the \ac{dnn} probably learned to use this information for better segmentation masks.\\
+		The \ac{dnn} trained on RGB with depth are expected to be slightly biased towards shape since the depth data keeps only shape information. The fact that there is more shape information does not necessarily mean that the \ac{dnn} will favor this kind of information or use this information more than without depth data. Nevertheless, the shape information is more accessible with a fourth depth channel, and the \ac{dnn} probably learned to use this information for better segmentation masks.\\
 		The expectation for the shape and texture amount is that more unique shapes and fewer unique textures will lead to higher shape awareness (higher bias towards shape) but less than depth information. The same applies to texture. More unique textures and fewer unique shapes in the train data are expected to increase texture awareness (higher bias towards texture). \\
 		No metric will be used in this experiment. There will be a visual investigation of whether the results are orientated towards texture or shape.\\
 		\\
 		All twenty test images are available in the appendix \ref{appendix:testdata-examples-bias}.
 	
-	
+	\clearpage
 	
 	\section{In-Distribution Performance and Generalization Test}
 	\label{sec:in-distribution-performance-generalization}
@@ -48,9 +48,54 @@
 		These experiments will show if the \ac{dnn}s just learned the train data or a pattern behind it. Do they learn the shapes in the train data or, more generally, use shape information for segmentation? The same applies to texture.\\
 		In addition, this test will show the influence of depth and shape/texture on these investigations.\\
 		The general performance is expected to be good but with space for improvements, due to the limited train time. The generalization of novel objects is expected to be good; thus, it still is in-distribution data and is expected to generalize enough for such a task. The shape generalization is expected to improve with depth data and more unique shapes in the train data. The expectation for texture generalization is that a higher amount of textures in the train data leads to a higher generalization, and networks using depth data should also lead to better performance due to the smaller expected texture bias.\\
-		This experiment will measure the results using the mean \acl{iou}. A mask can be defined as a two-dimensional complex shape. The \ac{iou} is a standard metric in comparing shapes as stated by \textcite{Rezatofighi2019}, \enquote{IoU, also known as Jaccard index, is the most commonly used metric for comparing the similarity between two arbitrary shapes.}. The \ac{iou} is well comprehensible. The \ac{iou} measure how high the overlay of two shapes is by dividing their area of intersection, where the shapes overlay with each other, with their area of union, the summarized area of both shapes.\\
-		The resulting mean \ac{iou}s will be compared.\\
-		\\
+		This experiment will measure the results using the mean \acl{iou}. A mask can be defined as a two-dimensional complex shape. The \ac{iou} is a standard metric in comparing shapes as stated by \textcite{Rezatofighi2019}, \enquote{IoU, also known as Jaccard index, is the most commonly used metric for comparing the similarity between two arbitrary shapes.}. The \ac{iou} is well comprehensible. The \ac{iou} measures how high the overlay of two shapes is by dividing their intersection area, where the shapes overlay with each other, with their area of union, the summarized area of both shapes. This means \ac{iou} is a metric in percentage: how much does two objects overlay related to their total taken space. The resulting mean \ac{iou}s will be compared.\\
+		The implementation of \ac{iou} is simple but trickier than initially seems. A logical AND is applied to calculate the intersection, and a logical OR is needed for the union. It must be a logical operation because the background has the value zero and the mask has the value one, and the \ac{iou} only wants to calculate the intersection and union of the masks. Both binary maps get summed up to get the intersection and union as one value. \\
+		The last step is to divide the total intersection through the total union. A Python implementation can be seen in listing \ref{lst:calc-io}.
+		\begin{lstlisting}[language=Python,caption=Calculate the \acl{iou} between two single masks, label=lst:calc-io]
+def calc_intersection_over_union(mask_1, mask_2):
+		intersection = np.logical_and(mask_1, mask_2)
+		union = np.logical_or(mask_1, mask_2)
+		
+		intersection_area = np.sum(intersection)
+		union_area = np.sum(union)
+		
+		# Avoid division by zero
+		if union_area == 0:
+				return 0.0
+		
+		return intersection_area / union_area
+		\end{lstlisting}
+		
+		The tricky part is not the \ac{iou} itself; it is the object matching—the choice of which masks (objects) should get compared. Simply going through the solutions and predictions and taking the chronological arranged order can lead to misleading results; the predictions could be 100\% accurate and still could get 0\% \ac{iou} when the order of objects has a different arrangement. To avoid this, a simple matching algorithm is used in this study. The idea is to find the matching where the objects have the highest total \ac{iou}. The task is changed to the best object assignment with the highest cost reduction using the Jonker-Volgenant algorithm \cite{Jonker1987} from scipy \cite{scipy}. The \ac{iou} is better as higher it gets; thus, the \ac{iou} values get negated. Listing \ref{lst:mask-matching} shows how the mean \ac{iou} of two mask gray images is calculated using object matching.
+		\begin{lstlisting}[language=Python,caption=Calculate the mean \acl{iou} between two mask images using mask matching, label=lst:mask-matching]
+def calc_metric_with_object_matching(mask_1, mask_2, metric_func):
+		if mask_1.shape != mask_2.shape:
+				raise ValueError(f"Can't calculate the IoU between the 2 masks because of different shapes: {mask_1.shape} and {mask_2.shape}")
+		
+		labels_1 = np.unique(mask_1)
+		labels_2 = np.unique(mask_2)
+		
+		# Remove the background (0 label)
+		labels_1 = labels_1[labels_1 != 0]
+		labels_2 = labels_2[labels_2 != 0]
+		
+		metric_matrix = np.zeros((len(labels_1), len(labels_2)))
+		
+		# Compute the metric for each pair of labels
+		for i, label_1 in enumerate(labels_1):
+				for j, label_2 in enumerate(labels_2):
+						cur_mask_1 = np.where(mask_1 == label_1, 1, 0)
+						cur_mask_2 = np.where(mask_2 == label_2, 1, 0)
+						metric_matrix[i, j] = metric_func(cur_mask_1, cur_mask_2)
+		
+		# Maximize total metric func across matched pairs
+		row_ind, col_ind = linear_sum_assignment(-metric_matrix)  # maximize IoU
+		
+		# Calculate mean IoU for matched pairs
+		matched_metrics = [metric_matrix[i, j] for i, j in zip(row_ind, col_ind)]
+		return np.mean(matched_metrics) if matched_metrics else 0.0
+		\end{lstlisting}
+		
 		Five examples from every in-distribution test dataset are shown in appendix \ref{appendix:testdata-examples-in-distribution}.
 	
 	
