@@ -2,12 +2,12 @@
 \label{chap:kapitel4}
 
 	All three here covered experiments are needed to answer the three hypotheses from \ref{sec:hypothesis-statement}. The relation is not one experiment for one hypothesis. Multiple experiments are needed to answer one hypothesis.\\
-	18 different \acl{dnn} are used in the three experiments. Every \ac{dnn} shares the same training conditions and only differ in the used train data.\\
+	18 different \acl{dnn}s are used in the three experiments. Every \ac{dnn} shares the same training conditions and only differ in the used train data.\\
 	9 \ac{dnn}s with only RGB data and 9 with RGB and depth data. The nine datasets have different object compositions; the major difference is the shapes and textures in the images. There are datasets with 10, 80, and 160 shapes and textures. All combinations yield in 9 datasets.\\
 	It follows a listing of training conditions that keep the same overall trained networks in this work:
 	\begin{itemize}
 		\item \textbf{\ac{dnn}:} Mask R-CNN from torchvision
-		\item \textbf{Epochs:} 50
+		\item \textbf{Epochs:} 40
 		\item \textbf{Data amount:} 20000
 		\item \textbf{Width and height:} 1920 x 1080
 		\item \textbf{Warm-up iterations:} 2000
@@ -27,27 +27,28 @@
 	\section{Shape vs. Texture Attention Test}
 	\label{sec:shape-texutre-attention-test}
 		The Shape vs. Texture Attention Test tries to figure out whether the \ac{dnn} prefers to use local information (texture) or global information (shape) for decision-making.\\
-		Twenty handcrafted exceptional cases were built to achieve that. The environment of these scenes is equal to the train data, and the awareness of shapes and textures varies. Truly special is that the shapes have multiple textures. For us humans, it is obvious to use the global information (shape) to assign the pixels to the objects, but a \ac{dnn} can decide differently \cite{Geirhos2020}\cite{Mohla2022}\cite{Baker2020}.\\
+		Twenty-four handcrafted exceptional cases were built to achieve that. The environment of these scenes is equal to the train data. Truly special is that in 12 cases, the shapes have multiple textures, and in the other 12 cases, the shapes have the same texture. For us humans, it is obvious to use the global information (shape) to assign the pixels to the objects, but a \ac{dnn} can decide differently \cite{Geirhos2020}\cite{Mohla2022}\cite{Baker2020}.\\
 		% The experiment is still influenced by the fact that \ac{dnn} does not only use one of them to make their decision.
-		The 20 tests include five images with known shapes and known textures, five with unknown shapes and known textures, five with known shapes and unknown textures, and five with unknown shapes and unknown textures. This combination of known and unknown shapes and textures can help to get more insights and understanding. For example, it could be that a \ac{dnn} has a bias towards texture but also learned some shape information without enough generalization caused by the texture bias.\\
+		The twenty-four tests include six images with known shapes and known textures, six with unknown shapes and known textures, six with known shapes and unknown textures, and six with unknown shapes and unknown textures. This combination of known and unknown shapes and textures can help reducing the influence of prior data. For example, it could be that a \ac{dnn} has a bias towards texture but also learned some shape information without enough generalization caused by the texture bias.\\
 		It is expected that there is a texture bias by the \ac{dnn} trained on only RGB data due to research \cite{Theodoridis2022}. Thus, the created masks should focus on the texture. \\
-		The \ac{dnn} trained on RGB with depth are expected to be slightly biased towards shape since the depth data keeps only shape information. The fact that there is more shape information does not necessarily mean that the \ac{dnn} will favor this kind of information or use this information more than without depth data. Nevertheless, the shape information is more accessible with a fourth depth channel, and the \ac{dnn} probably learned to use this information for better segmentation masks.\\
+		The \ac{dnn} trained on RGB with depth are expected to be slightly biased towards shape since the depth data keeps only shape information. The fact that there is more shape information does not necessarily mean that the \ac{dnn} will favor this kind of information or use this information more than without depth data. Nevertheless, the shape information is more accessible with a fourth depth channel, and the \ac{dnn} probably learns to use this information for better segmentation masks.\\
 		The expectation for the shape and texture amount is that more unique shapes and fewer unique textures will lead to higher shape awareness (higher bias towards shape) but less than depth information. The same applies to texture. More unique textures and fewer unique shapes in the train data are expected to increase texture awareness (higher bias towards texture). \\
-		No metric will be used in this experiment. There will be a visual investigation of whether the results are orientated towards texture or shape.\\
+		This experiment can not be quantified easily because there is no metric for measuring texture and shape bias in segmentation predictions. In this study, every object will be classified as a decision made with texture- or shape preference. When there are multiple textures on an object, the classification is "texture biased decision" if the object is not segmented entirely or multiple segmentation masks are predicted; else, the object is classified as "shape biased decision".\\
+		When there is only one texture on multiple shapes, the object is classified as "texture biased decision" if the object is segmented partwise or entirely together with other objects as one object; otherwise, the object is classified as "shape biased decision".\\
 		\\
-		All twenty test images are available in the appendix \ref{appendix:testdata-examples-bias}.
+		A sample of these test images are available in the appendix \ref{appendix:testdata-examples-bias}.
 	
 	\clearpage
 	
 	\section{In-Distribution Performance and Generalization Test}
 	\label{sec:in-distribution-performance-generalization}
-		Four test datasets with 100 images each were created to test the performance in in-distribution data and generalization. The test is designed to investigate the generalization of global information (shape) and local information (texture). This experiment can also hint in which direction the bias of the \ac{dnn} heads.\\
+		Four test datasets with 100 images each were created to test the performance and generalization in in-distribution data. The test is designed to investigate the generalization of global information (shape) and local information (texture). This experiment can also hint in which direction the bias of the \ac{dnn} heads.\\
 		One dataset uses shapes and textures used in every \ac{dnn}'s training. This will give insights into the baseline accuracy of the networks. There is no influence by unknown shapes or textures; the composition of objects may differ.\\
-		One dataset with unknown shapes and unknown textures will show the performance with novel objects.\\
+		One dataset with unknown shapes and unknown textures will show the performance and generalization with novel objects.\\
 		There is one dataset with new shapes and known textures for testing the generalization of shapes. A dataset with known shapes and unknown textures tests the texture generalization.\\
 		These experiments will show if the \ac{dnn}s just learned the train data or a pattern behind it. Do they learn the shapes in the train data or, more generally, use shape information for segmentation? The same applies to texture.\\
 		In addition, this test will show the influence of depth and shape/texture on these investigations.\\
-		The general performance is expected to be good but with space for improvements, due to the limited train time. The generalization of novel objects is expected to be good; thus, it still is in-distribution data and is expected to generalize enough for such a task. The shape generalization is expected to improve with depth data and more unique shapes in the train data. The expectation for texture generalization is that a higher amount of textures in the train data leads to a higher generalization, and networks using depth data should also lead to better performance due to the smaller expected texture bias.\\
+		The general performance is expected to be good but with space for improvements, due to the limited train time. The generalization of novel objects is expected to be good since it still is in-distribution data and is expected to generalize enough for such a task. The shape generalization is expected to improve with depth data and more unique shapes in the train data. The expectation for texture generalization is that a higher amount of textures in the train data leads to a higher generalization, and networks using depth data should also lead to better performance due to the smaller expected texture bias.\\
 		This experiment will measure the results using the mean \acl{iou}. A mask can be defined as a two-dimensional complex shape. The \ac{iou} is a standard metric in comparing shapes as stated by \textcite{Rezatofighi2019}, \enquote{IoU, also known as Jaccard index, is the most commonly used metric for comparing the similarity between two arbitrary shapes.}. The \ac{iou} is well comprehensible. The \ac{iou} measures how high the overlay of two shapes is by dividing their intersection area, where the shapes overlay with each other, with their area of union, the summarized area of both shapes. This means \ac{iou} is a metric in percentage: how much does two objects overlay related to their total taken space. The resulting mean \ac{iou}s will be compared.\\
 		The implementation of \ac{iou} is simple but trickier than initially seems. A logical AND is applied to calculate the intersection, and a logical OR is needed for the union. It must be a logical operation because the background has the value zero and the mask has the value one, and the \ac{iou} only wants to calculate the intersection and union of the masks. Both binary maps get summed up to get the intersection and union as one value. \\
 		The last step is to divide the total intersection through the total union. A Python implementation can be seen in listing \ref{lst:calc-io}.
@@ -89,26 +90,27 @@ def calc_metric_with_object_matching(mask_1, mask_2, metric_func):
 						metric_matrix[i, j] = metric_func(cur_mask_1, cur_mask_2)
 		
 		# Maximize total metric func across matched pairs
-		row_ind, col_ind = linear_sum_assignment(-metric_matrix)  # maximize IoU
+		row_ind, col_ind = linear_sum_assignment(-metric_matrix)
 		
 		# Calculate mean IoU for matched pairs
-		matched_metrics = [metric_matrix[i, j] for i, j in zip(row_ind, col_ind)]
+		matched_metrics = [metric_matrix[i, j] for i, j in zip(row_ind, 
+																																	col_ind)]
 		return np.mean(matched_metrics) if matched_metrics else 0.0
 		\end{lstlisting}
 		
-		Five examples from every in-distribution test dataset are shown in appendix \ref{appendix:testdata-examples-in-distribution}.
+		Two examples from every in-distribution test dataset are shown in appendix \ref{appendix:testdata-examples-in-distribution}.
 	
 	
 	
 	\section{Sim-to-Real Performance Test}
 	\label{sec:simt-to-real-performance-test}
-		Transferring to real-world data is challenging for \ac{dnn}s only trained on synthetic data. This work will check the real-world accuracy of the Mask R-CNNs presented here. It also wants to provide information about the influence of depth and unique shape/texture amount in train data on sim-to-real ability.\\
+		Transferring to real-world data is challenging for \ac{dnn}s only trained on synthetic data. This work will check the real-world accuracy of the Mask R-CNNs presented here. This test also wants to provide information about the influence of depth and unique shape/texture amount in train data on sim-to-real ability.\\
 		The networks used were only trained on the proposed synthetic datasets and never saw real-world data during their training. Thus, real-world data are \acl{ood}. This work uses the OCID-Dataset proposed by \citeauthor{Suchi2019} as a real-world dataset.\\
-		One part of this experiment compares the proposed \ac{dnn} to see the influence of depth and unique shape/texture amount towards sim-to-real ability.\\
+		One part of this experiment compares the proposed \ac{dnn}s to see the influence of depth and unique shape/texture amount towards sim-to-real ability.\\
 		Another part is the comparison with results from the "Learning RGB-D Feature Embeddings for Unseen Object Instance Segmentation" \cite{Xiang2021} paper and the comparison to the results from the in-distribution results to see the general sim-to-real ability also in comparison to the performance to the in-distribution performance.\\
 		For measuring the sim-to-real ability the \ac{iou} will be described, as described in section \ref{sec:in-distribution-performance-generalization}.\\
 		\\
-		The OCID-Dataset is shown with five samples in appendix \ref{appendix:testdata-examples-simtoreal}.
+		The OCID-Dataset is shown with three samples in appendix \ref{appendix:testdata-examples-simtoreal}.
 	
 	
 	

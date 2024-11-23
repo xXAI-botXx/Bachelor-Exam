@@ -1,9 +1,8 @@
 \chapter{Methodology and Implementation}
 \label{chap:kapitel3}
-	To find answers about the previous stated hypotheses \ref{chap:kapitel2}, an experimental research design was chosen.\\
-	An experimental research design suits well to this kind of hypothesis, and other designs would not fit such practical questions. This study proposes a new synthetic dataset for instance segmentation, focusing on bin-picking as domain. The dataset uses the Unreal Engine 5.4.4 \cite{ue5} with hyper-realistic textures and shapes to create the data for the experiments as described in \ref{sec:data}.\\
+	To find answers about the previous stated hypotheses in section \ref{sec:hypothesis-statement}, an experimental research design was chosen. An experimental research design suits well to this kind of hypothesis, and other designs would not fit such practical questions. This study proposes a new synthetic dataset for instance segmentation, focusing on bin-picking as domain. The dataset uses the Unreal Engine 5.4.4 \cite{ue5} with hyper-realistic textures and shapes to create the data for the experiments as described in section \ref{sec:data}.\\
 	To apply instance segmentation the widely used Mask R-CNN \cite{Kaiming2017} from PyTorch \cite{pytorch} is used \ref{sec:ai-model}.\\
-	The coding for data preparation, \ac{dnn} training, and inference was done in Visual Studio Code \cite{vscode}, a flexible and feature-rich \ac{ide}. The data generation was programmed in the blueprint system from Unreal Engine 5 \cite{ue5} in the form of visual programming.\\
+	The coding for data preparation, \ac{dnn} training, and inference was done in Visual Studio Code \cite{vscode}, a flexible and feature-rich \ac{ide}. The data generation was programmed in the blueprint system from Unreal Engine 5 \cite{ue5} in the form of visual programming \cite{Romero2022}.\\
 	For managing the Python environments, anaconda \cite{anaconda} got used and greatly impacted the workflow.\\
 	The training and inference of all \ac{dnn}s and experiments have been done on three separate remote computers. One Linux-based computer with SSH and X11vnc remote connection from Optonic \cite{optonic} with an NVIDIA RTX 4090 as \ac{gpu}. And two Windows-based computers from Shadow-Tech \cite{shadow}, both with an NVIDIA RTX A4500.
 
@@ -17,17 +16,17 @@
 		Starting with a summary about the used \ac{dnn}, Mask R-CNN \cite{Kaiming2017}. Notice that every implementation of Mask R-CNN can vary in a few points, but the core functionality remains the same.\\
 		Mask R-CNN is the name of a \ac{dnn}, which is historical for instance segmentation. It builds up from Faster R-CNN \cite{Ren2016}, uses the ability to detect objects, and adds the creation of masks for every object. It is a widely adopted architecture and shines with its flexible nature and precise masks.\\
 		To understand the fundamentals of this \ac{dnn}, it follows brief explanations about the underlying elements followed by the composition of these elements.\\
-		\textbf{\ac{cnn}:} Convolutional Neural Networks are key architectures in modern computer vision. It detects spatial features and consists of convolution layers, which convolute images using filters or kernels to detect features like edges, texture, or other patterns, pooling layers, which reduce the size of the features by taking only the maximal value from every area and uses activation functions to be able to map non-linear functions \cite{Oshea2015}.\\
-		\textbf{ResNet:} Residual Networks are special types of \ac{cnn}s and constitute the backbone of Mask R-CNN. It takes on the feature extraction and is most likely pre-trained. It uses skip connections to ensure the ability to generalize in deeper layers. Output is a dense version of the origin image, which contains the features from it, called feature-map\cite{He2015}.\\
-		\textbf{\ac{fpn}:} Feature Pyramid Networks are used to get feature maps on different scales for object detection. The output from multiple ResNet layers is used with \ac{cnn}s to calculate new feature maps. In addition, it creates (also with \ac{cnn}s) a hierarchical structure (like a pyramid) with features in different resolutions and semantic \cite{Lin2017}.\\
+		\textbf{\ac{cnn}:} Convolutional Neural Networks are key architectures in modern computer vision. It detects spatial features and consists of convolution layers, which convolute images using filters or kernels to detect features like edges, texture, or other patterns and of pooling layers, which reduce the size of the features by taking only the maximal value from every area and uses activation functions to be able to map non-linear functions \cite{Oshea2015}.\\
+		\textbf{ResNet:} Residual Networks are special types of \ac{cnn}s and constitute the backbone of Mask R-CNN. It takes on the feature extraction and is most likely pre-trained. It uses skip connections to ensure the ability to generalize well in deeper layers. Output is a dense version of the origin image, which contains the features from it, called feature-map \cite{He2015}.\\
+		\textbf{\ac{fpn}:} Feature Pyramid Networks are used to get feature maps on different scales for object detection. The output from multiple ResNet layers is used with \ac{cnn}s to calculate new feature maps. In addition, it creates (also with \ac{cnn}s) a hierarchical structure (like a pyramid) with features in different resolutions and semantic \cite{Lin2017}. This allows to create masks also for very small and for very big objects.\\
 		\textbf{\ac{rpn}:} Region Proposal Networks uses feature-maps, for example, from ResNet or from \ac{fpn}, to build proposals that could contain objects called \ac{roi}s. First, the \ac{rpn} creates many anchor boxes for every X pixel. Then, a neural network classifies probabilities for every anchor box and only keeps the ones with high probability. Next up, a regression model refines the remaining anchor boxes. At last, the \ac{roi}s get filtered through \ac{nms}, which first filters the boxes with their scores, then removes boxes with too high \ac{iou}. This step is important because one object can have multiple anchor boxes, which is not wanted \cite{Ren2016}.\\
 		\textbf{\ac{roi} Align:} The \ac{roi} Align first combines the anchor boxes with the Feature-Maps (here just called \ac{roi}s). Since neural networks need the same input size and the \ac{roi}s can differ in width and height, the \ac{roi}s need to get resized (aligned) with as few information reductions as possible. \ac{roi} Align is one method to resize images without much information loss. It lays grids over the \ac{roi}s and uses precise float values for the positions, which leads to less information loss. Then a bilinear interpolation is applied to get the new resized \ac{roi}s \cite{Kaiming2017}.\\
-		\textbf{Object classification and bounding box regression:} A \ac{fc} is used for classification and bounding box regression. The \ac{fc} have a softmax layer to predict the class of the \ac{roi}s (often only background and one other object class). Moreover, a linear regression layer improves the bounding boxes for every \ac{roi} \cite{Ren2016}.
-		\textbf{\ac{fcn}:} A fully convolutional neural network is at least used for prediction of the \ac{roi}'s masks \cite{Kang2014}.
+		\textbf{Object classification and bounding box regression:} A \ac{fc} is used for classification and bounding box regression. The \ac{fc} have a softmax layer to predict the class of the \ac{roi}s (often only background and one other object class). Moreover, a linear regression layer improves the bounding boxes for every \ac{roi} \cite{Ren2016}.\\
+		\textbf{\ac{fcn}:} A fully convolutional neural network is at last used for the prediction of the \ac{roi}'s masks \cite{Kang2014}.
 		\newpage
 		The procedure of instance segmentation with Mask R-CNN in short:
 		\begin{enumerate}
-			\item Feature-Map creation with Backbone (ResNet).
+			\item Feature-Map creation with Backbone (ResNet + FPN).
 			\item \ac{roi} creation with \ac{rpn} including \ac{nms}.
 			\item \ac{roi} align, for equal size conditions.
 			\item Creation of the box head, using \ac{fc} for object classification and bounding box refinement.
@@ -46,9 +45,8 @@
 		This work uses the torchvision implementation from PyTorch \cite{Torchvision}. It is a stable, professional implementation and works with modern graphic cards.\\
 		Previously, the famous tensorflow implementation from Matterport \cite{Matterport} was used, but the implementation changed due to issues with newer graphic cards.\\
 		There was still much coding to make the \ac{dnn} work as intended. The Python file can be controlled by parameters and is well structured.\\
-		
-		One important part is the data loader, which first verifies the data, meaning it checks if there is a solution mask for every image and a depth image (if using depth). The verification also includes the filtering of train data without any object. Finally, it finds the pixel value used for the background.\\
-		During the training process, it loads the RGB image, the solution mask, and the depth image optionally. It also extracts a list of objects and bounding boxes from the solution mask. Data augmentations are significant for the robustness of the \ac{dnn}. These are random transformations and manipulation steps, including flipping, cropping, rotating, blurring, and adding noise to the image. A special data augmentation was applied to add more variation to the background since the background has only two different colors. The background augmentation is listed in \ref{lst:bg-augmentation}; thus, it is not a custom data augmentation. The background augmentation can add noise, a checkerboard pattern, a color gradient, or a color shift. The chosen effect will only be applied to the background using the segmentation masks. \\
+		One important part is the data loader, which first verifies the data, meaning it checks if there is a solution mask for every image and a depth image (if using depth). Finally, it finds the pixel value used for the background.\\
+		During the training process, it loads the RGB image, the solution mask, and the depth image optionally. It also extracts a list of objects and bounding boxes from the solution mask. Data augmentations are significant for the robustness of the \ac{dnn}. These are random transformations and manipulation steps, including flipping, cropping, rotating, blurring, and adding noise to the image. A special data augmentation was applied to add more variation to the background since the background has only two different colors. The background augmentation is listed in \ref{lst:bg-augmentation} since it is not a custom data augmentation. The background augmentation can add noise, a checkerboard pattern, a color gradient, or a color shift. The chosen effect will only be applied to the background using the segmentation masks. \\
 		Lastly, the data loader must prepare the input data for the right form for training, resizing, and transforming it into a tensor from PyTorch.
 		
 		\begin{lstlisting}[language=Python,caption=Random Augmentation of the Background using cv2 in Python, label=lst:bg-augmentation]
@@ -57,13 +55,17 @@ class Random_Background_Modification:
 		
 		def __call__(self, images):
 				rgb_img, depth_img, mask_img = images
-				rgb_img, depth_img, mask_img = pil_to_cv2([rgb_img, depth_img, mask_img])
+				rgb_img, depth_img, mask_img = pil_to_cv2([rgb_img, depth_img, 
+																																		mask_img])
 				
 				if random.random() < self.probability:
-						mode = random.choice(["noise", "checkerboard", "gradient pattern", "color shift"])
+						mode = random.choice(["noise", "checkerboard",     
+											  						 "gradient pattern", "color shift"])
 						
 						if mode == "noise":
-								background_pattern = np.random.randint(0, 256, (self.height, self.width, 3), dtype=np.uint8)
+								background_pattern = np.random.randint(0, 256, 
+																								(self.height, self.width, 3), 
+																								dtype=np.uint8)
 						elif mode == "checkerboard":
 								checker_size = random.choice([5, 10, 25, 50])
 								color1 = random.randint(180, 255)
@@ -72,52 +74,72 @@ class Random_Background_Modification:
 								color2 = [color2, color2, color2]    # Darker Color
 							
 								# Create the checkerboard pattern
-								background_pattern = np.zeros((self.height, self.width, 3), dtype=np.uint8)
+								background_pattern = np.zeros((self.height, self.width, 3)
+																														, dtype=np.uint8)
 								for i in range(0, self.height, checker_size):
-								for j in range(0, self.width, checker_size):
-								color = color1 if (i // checker_size + j // checker_size) % 2 == 0 else color2
-								background_pattern[i:i+checker_size, j:j+checker_size] = color
+										for j in range(0, self.width, checker_size):
+												color = color1 if (i // checker_size + 
+																							j // checker_size) 
+																							% 2 == 0 else color2
+												background_pattern[i:i+checker_size, 
+																							j:j+checker_size] = color
 						elif mode == "gradient pattern":
-								background_pattern = np.zeros((self.height, self.width, 3), dtype=np.uint8)
+								background_pattern = np.zeros((self.height, self.width, 3)
+																														, dtype=np.uint8)
 							
 								# Generate a gradient
 								if random.random() > 0.5:
 										for i in range(self.height):
 												color_value = int(255 * (i / self.height))
-												background_pattern[i, :] = [color_value, color_value, color_value]
+												background_pattern[i, :] = [color_value, 
+																												color_value, 
+																												color_value]
 								else:
 										for i in range(self.width):
 												color_value = int(255 * (i / self.width))
-												background_pattern[:, i] = [color_value, color_value, color_value]
+												background_pattern[:, i] = [color_value, 
+																												color_value, 
+																												color_value]
 						else:
 								B, G, R = cv2.split(rgb_img)
 							
 								# create shift
-								add_B = np.full(B.shape, random.randint(10, 150), dtype=np.uint8)
-								add_G = np.full(G.shape, random.randint(10, 150), dtype=np.uint8)
-								add_R = np.full(R.shape, random.randint(10, 150), dtype=np.uint8)
+								add_B = np.full(B.shape, random.randint(10, 150), 
+																												dtype=np.uint8)
+								add_G = np.full(G.shape, random.randint(10, 150), 
+																												dtype=np.uint8)
+								add_R = np.full(R.shape, random.randint(10, 150), 
+																												dtype=np.uint8)
 								
 								# make shift
-								shifted_B = cv2.add(B, add_B) if random.random() > 0.5 else cv2.subtract(B, add_B)
+								shifted_B = cv2.add(B, add_B) if random.random() > 0.5 
+																								else cv2.subtract(B, add_B)
 								
-								shifted_G = cv2.add(G, add_G) if random.random() > 0.5 else cv2.subtract(G, add_G)
+								shifted_G = cv2.add(G, add_G) if random.random() > 0.5 
+																								else cv2.subtract(G, add_G)
 								
-								shifted_R = cv2.add(R, add_R) if random.random() > 0.5 else cv2.subtract(R, add_R)
+								shifted_R = cv2.add(R, add_R) if random.random() > 0.5 
+																								else cv2.subtract(R, add_R)
 								
 								# apply shift
-								background_pattern = cv2.merge((shifted_B, shifted_G, shifted_R))
+								background_pattern = cv2.merge((shifted_B, 
+																									shifted_G, 
+																									shifted_R))
 								
 						# apply pattern only on background:
 						
 						# get pattern in right size
-						background_pattern = cv2.resize(background_pattern, (rgb_img.shape[1], rgb_img.shape[0]))
+						background_pattern = cv2.resize(background_pattern, 
+																	(rgb_img.shape[1], rgb_img.shape[0]))
 						
 						# Create mask for background and objects
 						bg_mask = (mask_img == self.bg_value).astype(np.uint8)
 						fg_mask = 1 - bg_mask
 						
 						# Combine the original image and generated pattern
-						background_with_pattern = cv2.bitwise_and(background_pattern, background_pattern, mask=bg_mask)
+						background_with_pattern = cv2.bitwise_and(background_pattern, 
+																													background_pattern, 
+																													mask=bg_mask)
 						objects_only = cv2.bitwise_and(rgb_img, rgb_img, mask=fg_mask)
 						
 						# Overlay the generated pattern and the original objects
@@ -126,43 +148,60 @@ class Random_Background_Modification:
 						result = rgb_img
 				
 				# Convert back to cv2
-				result, depth_img, mask_img = cv2_to_pil([result, depth_img, mask_img])
+				result, depth_img, mask_img = cv2_to_pil([result, 
+																										depth_img, 
+																										mask_img])
 				return result, depth_img, mask_img
 		\end{lstlisting}
 		
-		The training function needed experiment tracking, logging, printouts, learn rate scheduling, optimization, model loading, and more. For experiment tracking, mlflow and tensorboard were implemented. Both are helpful tools for tracking training and optimizing the training process. For learn rate scheduling, a circular scheduler was chosen to stabilize the training and, at the same time, stay aware of local minima. The circular scheduler increases and decreases the learning rate in a given range and steps. The model loading and creation process was done without effort through the simple and well-functioning PyTorch implementation. The first layer gets optionally adjusted to add a depth channel to the input image. There is also an adjustment at the loss weights to weigh the segmentation more. The \acl{nms} got adjusted due to the clutter environments in bin picking. Listing \ref{lst:model-loading} shows the loading and adjustment. Notice how simple it is to adjust the architecture. The \ac{dnn} loading function also prints out every layer and a summary of the layers, which is a fascinating insight into the architecture.
+		The training function needed experiment tracking, logging, printouts, learn rate scheduling, optimization, model loading, and more. For experiment tracking, mlflow and tensorboard were implemented. Both are helpful tools for tracking training and optimizing the training process. For learn rate scheduling, a simple custom scheduler was chosen with warm-up steps to first make small steps in the correct direction and then be able to increase the learning rate. Choosing a high learning rate at the beginning would lead to swinging up weight over-adjustments. \\
+		The model loading and creation process was done without effort through the simple and well-functioning PyTorch implementation. The first layer gets optionally adjusted to add a depth channel to the input image. There is also an adjustment at the loss weights to weigh the segmentation more. The \acl{nms} got adjusted due to the clutter environments in bin picking. Listing \ref{lst:model-loading} shows the loading and adjustment. Notice how simple it is to adjust the architecture. The \ac{dnn} loading function also prints out every layer and a summary of the layers, which is a fascinating insight into the architecture.
+		\clearpage
 		
 		\begin{lstlisting}[language=Python,caption=Loading function of Mask R-CNN using torchvision, label=lst:model-loading]
-def load_maskrcnn(weights_path=None, use_4_channels=False, pretrained=True,
-		image_mean=[0.485, 0.456, 0.406, 0.5], image_std=[0.229, 0.224, 0.225, 0.5],    # from ImageNet
-		min_size=1080, max_size=1920, log_path=None, should_log=False, should_print=True):
+def load_maskrcnn(
+				weights_path=None, 
+				use_4_channels=False, 
+				pretrained=True,
+				image_mean=[0.485, 0.456, 0.406, 0.5], 
+				image_std=[0.229, 0.224, 0.225, 0.5],    
+				min_size=1080, 
+				max_size=1920, 
+				log_path=None, 
+				should_log=False, 
+				should_print=True):
 		
-		backbone = resnet_fpn_backbone(backbone_name='resnet50', weights=ResNet50_Weights.IMAGENET1K_V2) # ResNet50_Weights.IMAGENET1K_V1)
-		model = MaskRCNN(backbone, num_classes=2)  # 2 Classes (Background + 1 Object)
+		backbone = resnet_fpn_backbone(backbone_name='resnet50',
+																			weights=ResNet50_Weights.IMAGENET1K_V2
+																			) 
+		model = MaskRCNN(backbone, num_classes=2)  
 		
 		if use_4_channels:
 				# Change the first Conv2d-Layer for 4 Channels
-				in_features = model.backbone.body.conv1.in_channels    # this have to be changed
+				in_features = model.backbone.body.conv1.in_channels    
 				out_features = model.backbone.body.conv1.out_channels
 				kernel_size = model.backbone.body.conv1.kernel_size
 				stride = model.backbone.body.conv1.stride
 				padding = model.backbone.body.conv1.padding
 				
 				# Create new conv layer with 4 channels
-				new_conv1 = torch.nn.Conv2d(4, out_features, kernel_size=kernel_size, stride=stride, padding=padding)
+				new_conv1 = torch.nn.Conv2d(4, out_features,
+																				kernel_size=kernel_size, 
+																				stride=stride, 
+																				padding=padding)
 				
 				# copy the existing weights from the first 3 Channels
 				with torch.no_grad():
 				new_conv1.weight[:, :3, :, :] = model.backbone.body.conv1.weight  # Copy old 3 Channels
-				new_conv1.weight[:, 3:, :, :] = model.backbone.body.conv1.weight[:, :1, :, :]  # Init new 4.th Channel with the one old channel
-				# torch.nn.init.kaiming_normal_(new_conv1.weight[:, 3:, :, :], mode='fan_out', nonlinearity='relu')
+				new_conv1.weight[:, 3:, :, :] = model.backbone.body.conv1.weight
+																														[:, :1, :, :]
 				
 				
-				model.backbone.body.conv1 = new_conv1  # Replace the old Conv1 Layer with the new one
+				model.backbone.body.conv1 = new_conv1
 				
 				# Modify the transform to handle 4 channels
-				#       - Replace the transform in the model with a custom one
-				model.transform = GeneralizedRCNNTransform(min_size, max_size, image_mean, image_std)
+				model.transform = GeneralizedRCNNTransform(min_size, max_size, 
+																										image_mean, image_std)
 		
 		# adjust loss weights
 		model.rpn.rpn_cls_loss_weight = 1.0
@@ -180,49 +219,24 @@ def load_maskrcnn(weights_path=None, use_4_channels=False, pretrained=True,
 		
 		# load weights
 		if weights_path:
-				model.load_state_dict(state_dict=torch.load(weights_path, weights_only=True)) 
+				model.load_state_dict(state_dict=torch.load(weights_path, 
+																												weights_only=True)) 
 		
+		# printing the architecture
 		model_str = "Parameter of Mask R-CNN:"
 		model_parts = dict()
-		for name, param in model.named_parameters():
-				model_str += f"\n    - Parameter Name: {name}"
-				model_str += f"\n    - Parameter Shape: {param.shape}"
-				model_str += f"\n    - Requires Grad: {param.requires_grad}"
-				
-				if "backbone" in name:
-						model_str += f"\n    - Belongs to the Backbone\n"
-				elif "rpn" in name:
-						model_str += f"\n    - Belongs to the RPN\n"
-				elif "roi_heads" in name:
-						model_str += f"\n    - Belongs to the ROI Heads\n"
-				else:
-						model_str += f"\n    - Belongs to another part of the model\n"
-				
-				model_str += f"\n              {'-'*50}"
-				
-				# get model part
-				model_part_name_1 = name.split(".")[0]
-				model_part_name_2 = name.split(".")[1]
-				model_part_name = f"{model_part_name_1.upper()} - {model_part_name_2.upper()}"
-				if model_part_name in model_parts.keys():
-						model_parts[model_part_name] += 1
-				else:
-						model_parts[model_part_name] = 1
-				
-				model_str += "\n\nParameter Summary:"
-				for key, value in model_parts.items():
-						distance = 40 - len(f"    - {key}")
-						model_str += f"\n    - {key}{' '*distance}({value} parameters)"
-				model_str += f"\n{'-'*64}\n"
+		[...]
 		
-		
-		log(log_path, model_str, should_log=should_log, should_print=should_print)
+		log(log_path, model_str, should_log=should_log, 
+																should_print=should_print)
 		
 		return model
 		\end{lstlisting}
 		
-		\ac{sgd} with a Nesterov-Momentum \cite{Botev2016} was used as learn rate optimizer. \ac{sgd} is known for its good generalization and preciseness but also for its slowness. The Nesterov-Momentum was used to increase convergence speed and stabilize the process. Additionally, a custom learn rate scheduler was applied to increase the learning rate slowly (warm-up) and then reduce the learning rate slowly over time. The scheduler should stabilize the training process.\\ The train loop itself is a typical PyTorch train loop. \\
-		At least, the inference is essential to use the \ac{dnn}. The same data loader can be used for the inference due to its flexibility. The inference can process multiple images and create optional visualizations from the created mask and the ground truth (if existing). Exceptional is the feature of visualizing in-between inference steps, as the feature maps from the \ac{fpn} or the \ac{roi} align. For that, hooks were implemented, which call a function when the layer runs. The hook function saves the output of the layer recursively in a dictionary. Recursion is needed through the nested layers. For the visualization, it was tricky to handle all the different sizes. It is clear to see every described step of the network and makes it sufficiently coherent; thus, listing \ref{lst:inference-insight} shows the described code for the hooking and the visualization, and appendix \ref{appendix:inference-insights} shows samples from one example inference with insights.\\
+		\ac{sgd} with Nesterov-Momentum \cite{Botev2016} was used as learn rate optimizer. \ac{sgd} is known for its good generalization and preciseness but also for its slowness. The Nesterov-Momentum was used to increase convergence speed and stabilize the process.\\
+		The train loop itself is a typical PyTorch train loop. \\
+		\clearpage
+		Lastly, the inference is essential to use the \ac{dnn}. The same data loader can be used for the inference due to its flexibility. The inference can process multiple images and create optional visualizations from the created mask and the ground truth (if existing). Exceptional is the feature of visualizing in-between inference steps, as the feature maps from the \ac{fpn} or the \ac{roi} align. For that, hooks were implemented, which call a function when the layer runs. The hook function saves the output of the layer in a dictionary. For the visualization, it was tricky to handle all the different sizes. It is clear to see every described step of the network and makes it sufficiently coherent; thus, listing \ref{lst:inference-insight} shows the described code for the hooking and the visualization, and appendix \ref{appendix:inference-insights} shows samples from one example inference with the network insights.\\
 		Additionally, given the ground truth, many different metrics can be calculated during the inference. The inference result is saved as a gray image or a numpy array. The whole process has a print-out for information about the progress.\\
 		The coding for the training and inference includes about 66 defined functions, 14 defined classes, one global keyword, 33 imports, 794 called functions and classes, 50 for-loops, 223 if statements, 194 bool operations, and 182 arithmetic operations.
 	
@@ -231,9 +245,9 @@ def load_maskrcnn(weights_path=None, use_4_channels=False, pretrained=True,
 	
 	\section{Data}
 	\label{sec:data}
-		Nine datasets were created with Unreal Engine 5 \cite{ue5} for the experiments. Each has RGB, mask, and depth images; there are 20.000 images per dataset (60.000 images in one dataset). In total, the datasets need 500-600 GB memory space. The resolution of the images is Full-HD (1920 x 1080). One dataset needed about two days to complete the generation process. Appendix \ref{appendix:traindata-examples} holds examples for every generated dataset.\\
-		The visual program in Unreal Engine 5 first makes adjustments to the background, bin box, lighting, and camera. Then, random materials and shapes combine and spawn in the bin box. The Materials and Shapes are used from Quixel Megascans \cite{Quixel}, a collection of high-quality assets. Samples of these shapes are available at the appendix \ref{appendix:shapes-for-training} and sample materials/textures are viewed in appendix \ref{appendix:materials-for-training}.\\
-		An RGB and depth image is rendered and saved using a structural name convention. Next, every object gets a unique color and a new material with that color, and the background and bin-box get a black color. The image is now rendered with a base color renderer, which only takes the base color of every object without any exposure or other effect; the Result is an RGB image with 0 as the background, and every object has a unique color. This process will be repeated 20.00 times, and the list of materials and shapes is fixed during this time. The list of materials and shapes is adjusted by switching to the next dataset, and the process starts from new.\\
+		Nine datasets were created with Unreal Engine 5 \cite{ue5} for the experiments. Each has RGB, mask, and depth images; there are 20.000 images per dataset (60.000 images counting RGB, depth and mask separately). All datasets together need 500-600 GB memory space. The resolution of the images is Full-HD (1920 x 1080). One dataset needed about two days to complete the generation process. Appendix \ref{appendix:traindata-examples} holds examples for every generated dataset.\\
+		The visual program in Unreal Engine 5 first makes adjustments to the background, bin box, lighting, and camera. Then, random materials and shapes gets combined and spawned in the bin box. The Materials and Shapes are used from Quixel Megascans \cite{Quixel}, a collection of high-quality assets. Samples of these shapes are available at the appendix \ref{appendix:shapes-for-training} and sample materials/textures are viewed in appendix \ref{appendix:materials-for-training}.\\
+		An RGB and depth image is rendered and saved using a structural name convention. Next, every object gets a unique color and a new material with that color, and the background and bin-box get a black color. The image is now rendered with a base color renderer, which only takes the base color of every object without any exposure or other effect; the result is an RGB image with 0 as the background, and every object has a unique color. This process will be repeated 20.00 times, and the list of materials and shapes is fixed during this time. The list of materials and shapes is adjusted by switching to the next dataset, and the process starts from new.\\
 		\\
 		It follows a more in-depth description of visual code for data generation. Only the most important parts can be covered. The code is too massive to show everything in this work here.\\
 		The data generator has 24 parameters for customization, as listed below.
@@ -300,24 +314,26 @@ def load_maskrcnn(weights_path=None, use_4_channels=False, pretrained=True,
 			\label{img:ue5_material_shape_choice}
 		\end{figure}
 		
-		During the data generation process, Python scripts were also highly required for processing shapes and materials, post-processing the segmentation masks to convert them to gray images, and unzipping a large number of folders.
+		During the data generation process, Python scripts were also highly required for processing shapes and materials, post-processing the segmentation masks to convert them to gray images, and unzipping a large number of folders.\\
+		\\
+		The nine in this work proposed datasets called \textbf{3xM} ("triple m") for \textbf{m}odel-\textbf{m}aterial-\textbf{m}ixture which refers to the combinations of different unique amounts of shapes and textures.
 		
 		
-		
+	\clearpage
 	\section{Challenges}
 	\label{sec:challenges}
 		During this study, many challenges occur, and maybe the solutions of them can help in the future.\\
 		The journey started with an NVIDIA GeForce GTX 1080 Ti graphic card and Mask R-CNN implementation from Matterport \cite{Matterport}. The implementation from Matterport only works with old versions of Tensorflow (Tensorflow was one given restriction), so the first task was to update the code from Matterport to a newer version. A strange, unwanted behavior occurred, where loading the same weights led to different, random results. Debugging was difficult due to the massive size of the \acl{dnn}. Switching to an already finished upgraded Mask R-CNN seemed to make more sense, but all five tried implementations did not want to work properly. So, the next approach was to try the old version of Mask R-CNN from Matterport. This old implementation came with massive problems with the newer Linux system and the old Python version needed for the Tensorflow version. The solution was virtual python environments with Anaconda \cite{anaconda}. These conda environments worked like a breeze and were also easy to replicate. This version worked, but the training had to stop since the graphic card changed to the newer NVIDIA RTX4090, and the Tensorflow version would not work on this new \ac{gpu}. It was finally time to switch to another architecture. YOLACT \cite{Bolya2019} was now attempted. First, an unofficial Tensorflow version, but quickly changed to the official PyTorch version; thus, there was already much time spent, and it seemed to be not working very well again, so the restriction of Tensorflow was lifted. This official YOLACT implementation also did not work with the new \ac{gpu} and was upgraded. During the upgrade, the code underwent tremendous changes to make it more accessible in Python; before, it was programmed to be used with parameters and not within Python. After all that work was done, the \ac{dnn} seemed to work, but it turned out that something was wrong with the network. It always found too many masks, and debugging was a large endeavor. At that time, only about one to two months were left (the data generation also needed much time to get work), so the decision was to try out the Mask R-CNN again, but with PyTorch's official implementation. PyTorch's implementation worked surprisingly well and quickly. \\
 		The next challenge is the most common all over the world: time. There was little time left, but the \ac{dnn} needed much time to train. The ideal would be 100 to 500 epochs for the best results. With 18 \ac{dnn} to train and a time of 3 days with 100, the study would take 54 days only for the training.\\
-		So, a second remote computer got leased from \cite{shadow}, and epochs were reduced to 20. The results were not optimal and not acceptable. So, a third remote computer was leased, and the epochs increased to 50. Three remote computers, each six \ac{dnn} to train with about 1 to 2 days computation time per network, make about two weeks to complete the whole training process. \\
+		So, a second remote computer got leased from \cite{shadow}, and epochs were reduced to 20. The results were not optimal and not acceptable. So, a third remote computer was leased, and the epochs increased to 40. Three remote computers, each six \ac{dnn} to train with about 1 to 2 days computation time per network, make about two weeks to complete the whole training process. \\
 		\\
-		Many other challenges appeared between these challenges, like OS system failure, SSH remote connection issues, storage shortage, \ac{gpu} tribe difficulties,  system-specific inconsistencies, and many more.\\
+		Many other challenges appeared between these challenges, like operating system failures, changing hardware, SSH remote connection issues, storage shortage, \ac{gpu} tribe difficulties,  system-specific inconsistencies, and many more.\\
 		\\
-		Another challenging part of this study was the creation of the synthetic datasets. The proposed data generator in Unreal Engine 5 needed much work and a finishing touch to be in a ready-to-use state. It started with collecting enough shapes and materials of a high quality and different appearance and continued with the programming of the data generator itself. It was challenging to get along with the - for games designed - Unreal Engine 5 and to render and save a virtual camera. Also, the creation of the segmentation masks took work. Moreover, many bugs occurred with the spawning objects, like rotating too fast and falling out of the box. Most bugs were fixed, but the data generation is still imperfect.\\
+		Another challenging part of this study was the creation of the synthetic datasets. The proposed data generator in Unreal Engine 5 needed much work and a finishing touch to be in a ready-to-use state. It started with collecting enough shapes and materials of a high quality and different appearance and continued with the programming of the data generator itself. It was challenging to get along with the - for games designed - Unreal Engine 5 and to render and save a virtual camera. Also, the creation of the segmentation masks took work. Moreover, many bugs occurred with the spawning objects, like rotating too fast, wrong scaling and falling out of the box. Most bugs were fixed, but the data generation is still imperfect.\\
 		In the end, the generation of 9 datasets needed a long time, about ten days, and every small change needed a restart of the whole generation process.\\
 		\\
 		To carry it to the extreme, in the middle of this study, a personal challenge from the author popped up out of nowhere. The right side of the author's face experienced complete paralysis called peripheral facial paralysis. He visits many medical institutions for several months, from hospitals to house doctors, otologists, alternative practitioners, acupuncture, and neurologists. The right eye was at risk of drying out, and the sense of taste was strange due to the numbness. \\
-		In the end, the author is grateful to have faced all these challenges with a lot of learning and completed this work despite all its difficulties.
+		In the end, the author is grateful to have faced all these challenges with a lot of learnings and completed this work despite all its difficulties.
 		
 
 
