@@ -20,21 +20,86 @@
 		\item \textbf{Data Augmentations:} Random flip, rotation, crop, brightness contrast, noise, blur, scale and background modification
 	\end{itemize}
 	
+	\clearpage
+	To test if the performance difference from experiments \ref{sec:in-distribution-performance-generalization} and \ref{sec:simt-to-real-performance-test} are statistically significant, the Wilcoxon-Test \cite{Rey2011} is applied. This test checks the null hypothesis that the difference between the \ac{iou} values between two networks are symmetrically distributed around the value 0, which would mean that there is no systematic difference between the two results.\\
+	The Wilcoxon-Test calculates the differences between every \ac{iou} value, divides into the groups of positive and negative signs, and weights them with the absolute difference. Finally, the test checks if the differences and signs fluctuate consistently in a random pattern or if the fluctuation is pronounced enough to reject the assumption and assume a systematical difference.\\
+	The Wilcoxon-Test was chosen through the not normal distributed \ac{iou} values.
+	\\
+	It follows a toy example to see the process of the Wilcoxon Test.\\
+	\textbf{Dataset 1 (Model A \ac{iou})} and \textbf{Dataset 2 (Model B \ac{iou}):}
+	\[
+	\mathbf{X} = [0.75, 0.82, 0.78, 0.88, 0.91], \mathbf{Y} = [0.72, 0.84, 0.76, 0.85, 0.89]
+	\]
+	
+	\textbf{Step 1: Calculate Differences}
+	\[
+	d_i = X_i - Y_i = [0.03, -0.02, 0.02, 0.03, 0.02]
+	\]
+	
+	\textbf{Step 2: Compute Rankings}\\
+	Absolute Values for ranking:
+	\[
+	|d_i| = [0.03, 0.02, 0.02, 0.03, 0.02]
+	\]
+	Sorted and Ranked:
+	\[
+	[0.02, 0.02, 0.02, 0.03, 0.03] = [1, 2, 3, 4, 5]
+	\]
+	Calc mean ranks for the same rank:
+	\[
+	\text{Mean rank for } 0.02 = \frac{1 + 2 + 3}{3} = 2.0
+	\]
+	\[
+	\text{Mean rank for } 0.03 = \frac{4 + 5}{2} = 4.5
+	\]
+	Assign ranking results:
+	\[
+	\text{Ranks} = [4.5, 2.0, 2.0, 4.5, 2.0]
+	\]
+	
+	\textbf{Step 3: Assign Signs to Ranks}
+	\[
+	\text{Signed Ranks} = [+4.5, -2.0, +2.0, +4.5, +2.0]
+	\]
+	
+	\textbf{Step 4: Compute Test Statistic}\\
+	The sum of positive ranks is:
+	\[
+	W^+ = 4.5 + 2.0 + 4.5 + 2.0 = 13.0
+	\]
+	
+	The sum of negative ranks is:
+	\[
+	W^- = 2.0
+	\]
+	
+	The test statistic is the smaller of the two:
+	\[
+	W = \min(W^+, W^-) = 2.0
+	\]
+	
+	\textbf{Step 5: Determine Significance}\\
+	Using \href{https://de.wikipedia.org/wiki/Wilcoxon-Vorzeichen-Rang-Test#Teststatistik}{the Wilcoxon signed-rank table} for \( n = 5 \) and a two-tailed test at \( \alpha = 0.05 \), the critical value is \( W_\text{critical} = 0 \). Since \( W = 2.0 \) is greater than \( W_\text{critical} \), we fail to reject the null hypothesis.\\
+	\\
+	The described process is the core functionality of the Wilcoxon Test, but it gets a bit more complicated when applied to data with more observations. Then, a standardized test statistic is calculated and used to reject the null hypothesis.
+	
+	
 	
 	% \section{Experiment Design and Metrics}
 	% \label{sec:experiment-design}
 	
 	\section{Shape vs. Texture Attention Test}
 	\label{sec:shape-texutre-attention-test}
-		The Shape vs. Texture Attention Test tries to figure out whether the \ac{dnn} prefers to use local information (texture) or global information (shape) for decision-making.\\
+		The Shape vs. Texture Attention Test tries to figure out whether the \ac{dnn} prefers to use local information (texture) or global information (shape) for decision-making. Research already proves that there is a bias towards texture in instance segmentation models \cite{Theodoridis2022}. This experiment wants to confirm this claim for the data used and the Mask R-CNN model.\\
 		Twenty-four handcrafted exceptional cases were built to achieve that. The environment of these scenes is equal to the train data. Truly special is that in 12 cases, the shapes have multiple textures, and in the other 12 cases, the shapes have the same texture. For us humans, it is obvious to use the global information (shape) to assign the pixels to the objects, but a \ac{dnn} can decide differently \cite{Geirhos2020}\cite{Mohla2022}\cite{Baker2020}.\\
 		% The experiment is still influenced by the fact that \ac{dnn} does not only use one of them to make their decision.
-		The twenty-four tests include six images with known shapes and known textures, six with unknown shapes and known textures, six with known shapes and unknown textures, and six with unknown shapes and unknown textures. This combination of known and unknown shapes and textures can help reducing the influence of prior data. For example, it could be that a \ac{dnn} has a bias towards texture but also learned some shape information without enough generalization caused by the texture bias.\\
+		The twenty-four tests include six images with known shapes and known textures, six with unknown shapes and known textures, six with known shapes and unknown textures, and six with unknown shapes and unknown textures. This combination of known and unknown shapes and textures can help reducing the influence of prior data. For example, it could be that a \ac{dnn} has a bias towards texture but also learned some shape information without enough generalization caused by the texture bias.
+		\clearpage
 		It is expected that there is a texture bias by the \ac{dnn} trained on only RGB data due to research \cite{Theodoridis2022}. Thus, the created masks should focus on the texture. \\
 		The \ac{dnn} trained on RGB with depth are expected to be slightly biased towards shape since the depth data keeps only shape information. The fact that there is more shape information does not necessarily mean that the \ac{dnn} will favor this kind of information or use this information more than without depth data. Nevertheless, the shape information is more accessible with a fourth depth channel, and the \ac{dnn} probably learns to use this information for better segmentation masks.\\
 		The expectation for the shape and texture amount is that more unique shapes and fewer unique textures will lead to higher shape awareness (higher bias towards shape) but less than depth information. The same applies to texture. More unique textures and fewer unique shapes in the train data are expected to increase texture awareness (higher bias towards texture). \\
 		This experiment can not be quantified easily because there is no metric for measuring texture and shape bias in segmentation predictions. In this study, every object will be classified as a decision made with texture- or shape preference. When there are multiple textures on an object, the classification is "texture biased decision" if the object is not segmented entirely or multiple segmentation masks are predicted; else, the object is classified as "shape biased decision".\\
-		When there is only one texture on multiple shapes, the object is classified as "texture biased decision" if the object is segmented partwise or entirely together with other objects as one object; otherwise, the object is classified as "shape biased decision".\\
+		When there is only one texture on multiple shapes, the object is classified as "texture biased decision" if the object is segmented partwise or entirely together with other objects as one object or the object is segmented partwise with multiple objects predicted in the object; otherwise, the object is classified as "shape biased decision". If the \ac{dnn} is biased towards texture, it should be confused seeing only the same texture. In reality, it would be very beneficial to use shape information in such cases, and an inadequate segmentation result, as described, should hint at texture bias.\\
 		\\
 		A sample of these test images are available in the appendix \ref{appendix:testdata-examples-bias}.
 	

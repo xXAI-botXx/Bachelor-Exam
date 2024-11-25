@@ -20,4 +20,11 @@
 
 /thesis.pdf
 
+*.pdf
+*.png
+*.jpeg
+*.jpg
+
+*.synctex*
+
 
