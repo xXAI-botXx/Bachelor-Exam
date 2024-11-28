@@ -3,12 +3,34 @@
 
 	\section{Results}
 	\label{sec:results}
+	
+		\subsection{Shape vs. Texture Attention Test}
+			In figure \ref{img:bias-result-input-type}, the results are shown, split into input type (RGB/RGBD) and experiment types (multiple textures and one texture). The RGB models tend to be biased towards texture and the RGBD models are biased more towards shape but still towards texture in the experiment with multiple textures.
+			\begin{figure}[h]
+				\centering
+				\includegraphics[width=\textwidth]{kapitel5/bias_experiment_result_rgb_rgbd.png}
+				\caption[Shape vs. Texture Attention Test results are ordered after the the experiment types multiple textures and one texture. On the left is the mean result of the RGB models, and on the right is the mean result of the RGBD-trained models.]{Shape vs. Texture Attention Test results are ordered after the the experiment types multiple textures and one texture. On the left is the mean result of the RGB models, and on the right is the mean result of the RGBD-trained models.}
+				\label{img:bias-result-input-type}
+			\end{figure}
+			The experiment types differ between 28\%-32\% from each other.\\
+			Another essential view is the result regarding the shape and texture quantity. Figure \ref{img:bias-result-quantity-type} shows this divided result.\\
+			The shape bias decreases with more shapes used; this is in 5 of 6 times the case. The shape bias increases in 3 of 6 cases when the number of textures increases. The models trained with ten shapes and ten textures and the model trained with ten shapes and 80 textures stand out with a high amount of shape-biased decisions- 65\% and 71\%. All other results lay between 54\% and 33\%.
+			\begin{figure}[h]
+				\centering
+				\includegraphics[width=\textwidth]{kapitel5/bias_experiment_result_quantity.png}
+				\caption[Shape vs. Texture Attention Test results are ordered after the quantity of shape and texture. The criterion is described in section \ref{sec:shape-texutre-attention-test}.]{Shape vs. Texture Attention Test results are ordered after the quantity of shape and texture. The criterion is described in section \ref{sec:shape-texutre-attention-test}.}
+				\label{img:bias-result-quantity-type}
+			\end{figure}
+		
+		\subsection{In-Distribution Performance and Generalization Test}
+		
+		\subsection{Sim-to-Real Performance Test}
 
 
 
 	\section{Interpretation of Results}
 	\label{sec:interpretation-of-results}
-	
+		The results meets partwise the expectations, stated in chapter \ref{chap:kapitel3}, but also disagrees on other parts.
 	
 	
 	% \section{Hypotheses Confirmation}
@@ -16,10 +38,15 @@
 	
 	
 	
-	\section{Discussion} % Limitations and Challenges
-	\label{sec:doscussion}
+	\section{Discussion} % Limitations and Challenges, possible explanaitions
+	\label{sec:discussion}
 	
 	% Hypotheses Confirmation
+	
+	
+	
+	\section{Limiations} % Limitations and Challenges, possible explanaitions
+	\label{sec:limitations}
 	
 	\iffalse
 	Diskussion - Bias Experiment: In the bias experiment it is difficult to say if a prediction is biased towards texture or shape. All confusing data is only confusing on texture level, so a texture biased model should perform poorly in comparison to a shape biased model. But also a shape biased model will use texture information and the question is how much and how the impact really is. In addition there are other influences, like amount of objects per scene, brightness, reflective texture, novel texture, novel shape and all of these can influence the result. -> my opinion? what does the results look like?
