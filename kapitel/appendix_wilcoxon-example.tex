@@ -1,0 +1,63 @@
+\chapter{Wilcoxon Test Example}
+\label{appendix:wilcoxon-test-example}
+	It follows a toy example to see the process of the Wilcoxon Test.\\
+	The Wilcoxon Test tries to reject the null hypothesis. The null hypothesis is that the difference between both sequences can be described with random fluctuations. Here are the steps for trying to reject the null hypothesis.\\
+	\\
+	\textbf{Dataset 1 (Model A \ac{iou})} and \textbf{Dataset 2 (Model B \ac{iou}):}
+	\[
+	\mathbf{X} = [0.75, 0.82, 0.78, 0.88, 0.91], \mathbf{Y} = [0.72, 0.84, 0.76, 0.85, 0.89]
+	\]
+	
+	\textbf{Step 1: Calculate Differences}
+	\[
+	d_i = X_i - Y_i = [0.03, -0.02, 0.02, 0.03, 0.02]
+	\]
+	
+	\textbf{Step 2: Compute Rankings}\\
+	Absolute Values for ranking:
+	\[
+	|d_i| = [0.03, 0.02, 0.02, 0.03, 0.02]
+	\]
+	Sorted and Ranked:
+	\[
+	[0.02, 0.02, 0.02, 0.03, 0.03] = [1, 2, 3, 4, 5]
+	\]
+	Calc mean ranks for the same rank:
+	\[
+	\text{Mean rank for } 0.02 = \frac{1 + 2 + 3}{3} = 2.0
+	\]
+	\[
+	\text{Mean rank for } 0.03 = \frac{4 + 5}{2} = 4.5
+	\]
+	Assign ranking results:
+	\[
+	\text{Ranks} = [4.5, 2.0, 2.0, 4.5, 2.0]
+	\]
+	
+	\textbf{Step 3: Assign Signs to Ranks}
+	\[
+	\text{Signed Ranks} = [+4.5, -2.0, +2.0, +4.5, +2.0]
+	\]
+	
+	\textbf{Step 4: Compute Test Statistic}\\
+	The sum of positive ranks is:
+	\[
+	W^+ = 4.5 + 2.0 + 4.5 + 2.0 = 13.0
+	\]
+	
+	The sum of negative ranks is:
+	\[
+	W^- = 2.0
+	\]
+	
+	The test statistic is the smaller of the two:
+	\[
+	W = \min(W^+, W^-) = 2.0
+	\]
+	
+	\textbf{Step 5: Determine Significance}\\
+	Using \href{https://de.wikipedia.org/wiki/Wilcoxon-Vorzeichen-Rang-Test#Teststatistik}{the Wilcoxon signed-rank table} for \( n = 5 \) and a two-tailed test at \( \alpha = 0.05 \), the critical value is \( W_\text{critical} = 0 \). Since \( W = 2.0 \) is greater than \( W_\text{critical} \), we fail to reject the null hypothesis. So the values does not differ significant from each other and also could be a random fluctuation.\\
+	\\
+	The described process is the core functionality of the Wilcoxon Test, but it gets a bit more complicated when applied to data with more observations. Then, a standardized test statistic is calculated and used to reject the null hypothesis.
+
+

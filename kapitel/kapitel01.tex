@@ -37,7 +37,7 @@
 		This work presents 18 Mask R-CNN \cite{Kaiming2017} models. Nine models were trained on RGB-only data, and nine were trained on RGB depth data.\\
 		Each model is trained on another (here proposed) synthetic dataset. The datasets were created in Unreal Engine 5 \cite{Romero2022} and consist of 20.000 RGB, depth, and mask-images. The shapes and textures used vary between the datasets.\\ 
 		With these 18 \ac{dnn}s, three different studies were performed for generalization, shape-texture bias, and sim-to-real transfer. A few sets of data that have special and puzzling textures show if the \ac{dnn} learned to prefer shape or texture. This data includes images where the objects have multiple textures and images where the objects all have the same texture. An in-distribution test dataset with a structured combination of novel and known shapes and textures is proposed to test the performance and generalization of shape and texture.\\
-		Finally, an existing real-world dataset, for instance segmentation, is used to see the sim-to-real performance.
+		Finally, all trained \ac{dnn}s are tested with their mean \ac{iou} results on two completely different datasets. One of them is an (also here proposed) real-world dataset is used to see the sim-to-real performance in the bin-picking domain. The other sim-to-real test dataset is the OCID dataset \cite{Suchi2019} which belongs to the common indoor objects domain. 
 		
 	
 	
@@ -52,12 +52,11 @@
 		Another delimitation is the selection of \textit{different} shapes and textures. To quantify the difference between two shapes, as well as the difference between two textures, is difficult to measure and remains challenging. There are some methods, like the Structural Similarity Index Measure \cite{Wang2004}, but it is not a standard approach. Therefore, subjective selection was utilized to ensure practical feasibility, as objective methods proved insufficiently reliable for this context.
 		\\
 		Due to the amount of studies and time limitations, a limited test-data size is given.\\
-		\clearpage
 		This study can find indications and chances, while an underlying truth cannot be provided. Again, this is owed to the complexity and dimension of this research.\\
 		Also, due to time limitations, a suboptimal number of epochs and other suboptimal train parameter was chosen. More epochs would lead to even better results, but the extra precision should not influence the experiments; still, it is a limitation.
 		Next up, the number of different shapes and textures used is limited to a maximum of 160. The rare availability of high-quality shapes and textures justifies this.\\
 		The usage of depth information also comes with delimitations. There are many ways to use depth information, as described in section \ref{sec:state-of-the-art}, but this study can only approach one way to use depth, or else the amount of \ac{dnn} and training would increase significantly. This study uses the straightforward approach of adding a fourth channel with depth information.\\
-		Synthetic data often comes with quality issues, and this work's proposed datasets are not different. There are some major downsides which should be considered. The render quality should be higher than it is; however, the cause of this discrepancy remains unclear. The spawning objects can also spawn into each other, sometimes leading to unfavorable data. 
+		Synthetic data often comes with quality issues, and this work's proposed datasets are not different. There are some major downsides which should be considered. The render quality should be higher than it is; however, the cause of this discrepancy remains unclear. The spawning objects can also spawn into each other, sometimes leading to unfavorable data. And the normalization of the depth information not always works properly.
 		% Lastly, this study must meet the assumption that it will find limited novel knowledge. This study tries to reinforce or question current state-of-the-art research to find practical results. In a broader context, that could provide valuable insights. A profound look is not possible through the broad research question. Still, there are some novel questions that this study wants to answer.
 	
 		% only depth could be also interesting -> you said it?
@@ -66,7 +65,7 @@
 	\section{Key Definitions}
 	\label{sec:key-definitions}
 		Here are some important definitions for this work to make a clear point and prevent misunderstandings.\\
-		\textbf{Instance Segmentation:} Instance Segmentation is the task of finding and labeling every foreground object in an image pixel-wise. The classification of these objects is optional and plays no role in the segmentation. Defining when an object belongs to the foreground and when to the background is domain-specific and can even differ in a domain depends on the project's requirements. This study defines \textit{foreground objects} as objects that are wanted to be used for bin-picking in an industrial environment. Most likely every object inside a given bin.\\
+		\textbf{Instance Segmentation:} Instance Segmentation is the task of finding and labeling every foreground object in an image pixel-wise. The classification of these objects is optional and plays no role in the segmentation. Defining when an object belongs to the foreground and when to the background is domain-specific and can even differ in a domain depends on the project's requirements. This study defines \textit{foreground objects} as objects that are wanted to be used for bin-picking in an industrial environment.\\ %Most likely every object inside a given bin.\\
 		\textbf{Bin Picking:} During bin picking, a robot tries to grasp an object from a bin and uses or transports it to another place. Instance Segmentation is needed in bin picking to find all available objects with their exact position in the bin.\\
 		\textbf{Texture:} Texture is an object's visual appearance and pattern. An object can have the texture of a rock, water, salt, skin, piece of wood, steel beam, and much more. Texture falls into the category of local information. It describes specific areas on a detailed level and does not describe the overall shape.\\
 		\textbf{Material:} A material describes the physical properties of an object, like color, metalness, roughness, and the height of the surface. If a picture is taken of an object that has a material, on the picture, the texture of the object is visible, which is defined by its material. The properties of a material can be described as number values, like (0, 255, 0) for the color green or 0.8 for a high metalness, or, for more complexity, as textures.\\
@@ -80,6 +79,7 @@
 		\textbf{Generalization:} The \ac{dnn}'s ability to generalize defines how well it learns the underlying task and patterns of the train data. Shape- or texture-generalization, in instance segmentation specifically, is the ability to learn to segment objects with their shape or texture, even if they are novel to the \ac{dnn}. Meaning that the network learned how to extract shape or texture and detect object boundaries with this information. \\
 		\textbf{Bias:} A bias shows a preferred, learned strategy to solve a task. It is most likely caused by the train data itself but also influenced by the \ac{dnn} architecture. A shape- or texture bias is present when the \ac{dnn} prefers the global shape information or the local texture information to make mask predictions.\\
 		\textbf{Sim-to-real:} Sim-to-real is the transfer from synthetic train data to the real world. Synthetic data is used through its cheap and fast production and the challenging collection of labeled real data. The quality of synthetic data fluctuates but is always much less complex than the natural world and does not reproduce reality precisely enough, thus causing a gap. The goal is that the \ac{dnn} generalize well enough to bridge this sim-to-real gap.\\
+		\\
 		\textbf{Occlusions:} If only a part of an object is visible because another object lies on top, it is referred to as occlusion. Occlusion is a common problem in clutter scenes, appearing often in instance segmentation.
 		
 	
@@ -87,7 +87,7 @@
 	\section{Structure}
 	\label{sec:structure}
 		In the \hyperref[chap:kapitel2]{next chapter}, a brief look at the current state of research and related work will be done, which leads to the actual thesis.\\
-		Chapter \ref{chap:kapitel3} provides a description of used tools and environments. Furthermore, the implementation of the used \ac{dnn} and data generation will be explained.\\
+		Chapter \ref{chap:kapitel3} provides a description of used tools and environments for training and data generation. Furthermore, the implementation of the used \ac{dnn} and data generation will be explained.\\
 		Proceeding to chapter \ref{chap:kapitel4} where the concept of experiments and measurement of the results is described.\\
 		The 'results' chapter \ref{chap:kapitel5} shows the results of the experiments, followed by a discussion and thoughts about these and what maybe limitates the claims.\\
 		Ultimately a summary of the foundings is outlined in chapter \ref{chap:kapitel6}.

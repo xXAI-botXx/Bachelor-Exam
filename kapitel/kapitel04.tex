@@ -23,65 +23,7 @@
 	\clearpage
 	To test if the performance difference from experiments \ref{sec:in-distribution-performance-generalization} and \ref{sec:simt-to-real-performance-test} are statistically significant, the Wilcoxon-Test \cite{Rey2011} is applied. This test checks the null hypothesis that the difference between the \ac{iou} values between two networks are symmetrically distributed around the value 0, which would mean that there is no systematic difference between the two results.\\
 	The Wilcoxon-Test calculates the differences between every \ac{iou} value, divides into the groups of positive and negative signs, and weights them with the absolute difference. Finally, the test checks if the differences and signs fluctuate consistently in a random pattern or if the fluctuation is pronounced enough to reject the assumption and assume a systematical difference.\\
-	The Wilcoxon-Test was chosen through the not normal distributed \ac{iou} values.
-	\\
-	It follows a toy example to see the process of the Wilcoxon Test.\\
-	\textbf{Dataset 1 (Model A \ac{iou})} and \textbf{Dataset 2 (Model B \ac{iou}):}
-	\[
-	\mathbf{X} = [0.75, 0.82, 0.78, 0.88, 0.91], \mathbf{Y} = [0.72, 0.84, 0.76, 0.85, 0.89]
-	\]
-	
-	\textbf{Step 1: Calculate Differences}
-	\[
-	d_i = X_i - Y_i = [0.03, -0.02, 0.02, 0.03, 0.02]
-	\]
-	
-	\textbf{Step 2: Compute Rankings}\\
-	Absolute Values for ranking:
-	\[
-	|d_i| = [0.03, 0.02, 0.02, 0.03, 0.02]
-	\]
-	Sorted and Ranked:
-	\[
-	[0.02, 0.02, 0.02, 0.03, 0.03] = [1, 2, 3, 4, 5]
-	\]
-	Calc mean ranks for the same rank:
-	\[
-	\text{Mean rank for } 0.02 = \frac{1 + 2 + 3}{3} = 2.0
-	\]
-	\[
-	\text{Mean rank for } 0.03 = \frac{4 + 5}{2} = 4.5
-	\]
-	Assign ranking results:
-	\[
-	\text{Ranks} = [4.5, 2.0, 2.0, 4.5, 2.0]
-	\]
-	
-	\textbf{Step 3: Assign Signs to Ranks}
-	\[
-	\text{Signed Ranks} = [+4.5, -2.0, +2.0, +4.5, +2.0]
-	\]
-	
-	\textbf{Step 4: Compute Test Statistic}\\
-	The sum of positive ranks is:
-	\[
-	W^+ = 4.5 + 2.0 + 4.5 + 2.0 = 13.0
-	\]
-	
-	The sum of negative ranks is:
-	\[
-	W^- = 2.0
-	\]
-	
-	The test statistic is the smaller of the two:
-	\[
-	W = \min(W^+, W^-) = 2.0
-	\]
-	
-	\textbf{Step 5: Determine Significance}\\
-	Using \href{https://de.wikipedia.org/wiki/Wilcoxon-Vorzeichen-Rang-Test#Teststatistik}{the Wilcoxon signed-rank table} for \( n = 5 \) and a two-tailed test at \( \alpha = 0.05 \), the critical value is \( W_\text{critical} = 0 \). Since \( W = 2.0 \) is greater than \( W_\text{critical} \), we fail to reject the null hypothesis.\\
-	\\
-	The described process is the core functionality of the Wilcoxon Test, but it gets a bit more complicated when applied to data with more observations. Then, a standardized test statistic is calculated and used to reject the null hypothesis.
+	The Wilcoxon-Test was chosen through the not normal distributed \ac{iou} values. An example is available in the appendix \ref{appendix:wilcoxon-test-example}.
 	
 	
 	
@@ -132,7 +74,7 @@ def calc_intersection_over_union(mask_1, mask_2):
 		return intersection_area / union_area
 		\end{lstlisting}
 		
-		The tricky part is not the \ac{iou} itself; it is the object matching—the choice of which masks (objects) should get compared. Simply going through the solutions and predictions and taking the chronological arranged order can lead to misleading results; the predictions could be 100\% accurate and still could get 0\% \ac{iou} when the order of objects has a different arrangement. To avoid this, a simple matching algorithm is used in this study. The idea is to find the matching where the objects have the highest total \ac{iou}. The task is changed to the best object assignment with the highest cost reduction using the Jonker-Volgenant algorithm \cite{Jonker1987} from scipy \cite{scipy}. The \ac{iou} is better as higher it gets; thus, the \ac{iou} values get negated. Listing \ref{lst:mask-matching} shows how the mean \ac{iou} of two mask gray images is calculated using object matching.
+		The tricky part is not the \ac{iou} itself; it is the object matching—the choice of which masks (objects) should get compared. Simply going through the solutions and predictions and taking the chronological arranged order can lead to misleading results; the predictions could be 100\% accurate and still could get 0\% \ac{iou} when the order of objects has a different arrangement. To avoid this, a simple matching algorithm is used in this study. The idea is to find the matching where the objects have the highest total \ac{iou}. The task is changed to the best object assignment with the highest cost reduction using the Jonker-Volgenant algorithm \cite{Jonker1987} from scipy \cite{scipy}. The \ac{iou} is better as higher it gets; thus, the \ac{iou} values get negated. Listing \ref{lst:mask-matching} shows how the mean \ac{iou} of two mask gray images is calculated using object matching. This matching algorithm works similar to the matching of predicted and ground truth objects in \cite{Xiang2021}.
 		\begin{lstlisting}[language=Python,caption=Calculate the mean \acl{iou} between two mask images using mask matching, label=lst:mask-matching]
 def calc_metric_with_object_matching(mask_1, mask_2, metric_func):
 		if mask_1.shape != mask_2.shape:
@@ -170,12 +112,14 @@ def calc_metric_with_object_matching(mask_1, mask_2, metric_func):
 	\section{Sim-to-Real Performance Test}
 	\label{sec:simt-to-real-performance-test}
 		Transferring to real-world data is challenging for \ac{dnn}s only trained on synthetic data. This work will check the real-world accuracy of the Mask R-CNNs presented here. This test also wants to provide information about the influence of depth and unique shape/texture amount in train data on sim-to-real ability.\\
-		The networks used were only trained on the proposed synthetic datasets and never saw real-world data during their training. Thus, real-world data are \acl{ood}. This work uses the OCID-Dataset proposed by \citeauthor{Suchi2019} as a real-world dataset.\\
-		One part of this experiment compares the proposed \ac{dnn}s to see the influence of depth and unique shape/texture amount towards sim-to-real ability.\\
-		Another part is the comparison with results from the "Learning RGB-D Feature Embeddings for Unseen Object Instance Segmentation" \cite{Xiang2021} paper and the comparison to the results from the in-distribution results to see the general sim-to-real ability also in comparison to the performance to the in-distribution performance.\\
-		For measuring the sim-to-real ability the \ac{iou} will be described, as described in section \ref{sec:in-distribution-performance-generalization}.\\
+		The networks used were only trained on the proposed synthetic datasets and never saw real-world data during their training. Thus, real-world data are \acl{ood}. This work uses the in this paper introduced Optonic Bin-Picking Dataset and the OCID-Dataset proposed by \citeauthor{Suchi2019} as real-world datasets with two different but similar domains. \\
+		The properties of the Optonic Bin-Picking dataset are described in section \ref{sec:test-data}. The OCID dataset uses common objects like pens, keyboards and food packaging in a indoor environment like a table or floor with an optional carpet. All images are sized at 640 x 480 pixels. Two ASUS-PRO Xtion cameras were used to capture the scenes. More details are available at \citetitle{Suchi2019}.\\
+		Examples for the OCID dataset are available in the appendix \ref{appendix:testdata-ocid-examples-simtoreal}. Examples for the Optonic Bin-Picking dataset are available at appendix \ref{appendix:testdata-examples-simtoreal}.
 		\\
-		The OCID-Dataset is shown with three samples in appendix \ref{appendix:testdata-examples-simtoreal}.
+		One part of this experiment compares the proposed \ac{dnn}s to see the influence of depth and unique shape/texture amount towards sim-to-real ability.\\
+		Another part is the comparison to the results from the in-distribution results to see the general sim-to-real ability also in comparison to the performance to the in-distribution performance.\\
+		Lastly the sim-to-real results of both datasets are compared.\\
+		For measuring the sim-to-real ability the \ac{iou} will be described, as described in section \ref{sec:in-distribution-performance-generalization}.
 	
 	
 	

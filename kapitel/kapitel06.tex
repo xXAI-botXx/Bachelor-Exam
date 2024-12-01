@@ -13,8 +13,26 @@
 		% ...
 		% Investigating other input types, like only depth images, would be a interesting comparison and could give more insights.
 		% ...
-		% It also cold be interesting to make a similar investigation towards robustness. Robustness is a import factor of a \ac{dnn}, especially in sensitive fields, like autonomous driving, where new factors like new light settings happens all the time and live could depend on the robustness of a \ac{dnn}. 
-	
+		% It also cold be interesting to make a similar investigation towards robustness. Robustness is a import factor of a \ac{dnn}, especially in sensitive fields, like autonomous driving, where new factors like new light settings happens all the time and live could depend on the robustness of a \ac{dnn}.
+		
+	\clearpage 
+	\section{Challenges}    % Learnings
+	\label{sec:challenges}
+		During this study, many challenges occur, and maybe the solutions of them can help in the future.\\
+		The journey started with an NVIDIA GeForce GTX 1080 Ti graphic card and Mask R-CNN implementation from Matterport \cite{Matterport}. The implementation from Matterport only works with old versions of Tensorflow (Tensorflow was one given restriction), so the first task was to update the code from Matterport to a newer version. A strange, unwanted behavior occurred, where loading the same weights led to different, random results. Debugging was difficult due to the massive size of the \acl{dnn}. Switching to an already finished upgraded Mask R-CNN seemed to make more sense, but all five tried implementations did not want to work properly. So, the next approach was to try the old version of Mask R-CNN from Matterport. This old implementation came with massive problems with the newer Linux system and the old Python version needed for the Tensorflow version. The solution was virtual python environments with Anaconda \cite{anaconda}. These conda environments worked like a breeze and were also easy to replicate. This version worked, but the training had to stop since the graphic card changed to the newer NVIDIA RTX4090, and the Tensorflow version would not work on this new \ac{gpu}. It was finally time to switch to another architecture. YOLACT \cite{Bolya2019} was now attempted. First, an unofficial Tensorflow version, but quickly changed to the official PyTorch version; thus, there was already much time spent, and it seemed to be not working very well again, so the restriction of Tensorflow was lifted. This official YOLACT implementation also did not work with the new \ac{gpu} and was upgraded. During the upgrade, the code underwent tremendous changes to make it more accessible in Python; before, it was programmed to be used with parameters and not within Python. After all that work was done, the \ac{dnn} seemed to work, but it turned out that something was wrong with the network. It always found too many masks, and debugging was a large endeavor. At that time, only about one to two months were left (the data generation also needed much time to get work), so the decision was to try out the Mask R-CNN again, but with PyTorch's official implementation. PyTorch's implementation worked surprisingly well and quickly. \\
+		The next challenge is the most common all over the world: time. There was little time left, but the \ac{dnn} needed much time to train. The ideal would be 100 to 500 epochs for the best results. With 18 \ac{dnn} to train and a time of 3 days with 100, the study would take 54 days only for the training.\\
+		So, a second remote computer got leased from \cite{shadow}, and epochs were reduced to 20. The results were not optimal and not acceptable. So, a third remote computer was leased, and the epochs increased to 40. Three remote computers, each six \ac{dnn} to train with about 1 to 2 days computation time per network, make about two weeks to complete the whole training process. \\
+		\\
+		Many other challenges appeared between these challenges, like operating system failures, changing hardware, SSH remote connection issues, storage shortage, \ac{gpu} tribe difficulties,  system-specific inconsistencies, and many more.\\
+		\\
+		Another challenging part of this study was the creation of the synthetic datasets. The proposed data generator in Unreal Engine 5 needed much work and a finishing touch to be in a ready-to-use state. It started with collecting enough shapes and materials of a high quality and different appearance and continued with the programming of the data generator itself. It was challenging to get along with the - for games designed - Unreal Engine 5 and to render and save a virtual camera. Also, the creation of the segmentation masks took work. Moreover, many bugs occurred with the spawning objects, like rotating too fast, wrong scaling and falling out of the box. Most bugs were fixed, but the data generation is still imperfect.\\
+		In the end, the generation of 9 datasets needed a long time, about ten days, and every small change needed a restart of the whole generation process.\\
+		\\
+		To carry it to the extreme, in the middle of this study, a personal challenge from the author popped up out of nowhere. The right side of the author's face experienced complete paralysis called peripheral facial paralysis. He visits many medical institutions for several months, from hospitals to house doctors, otologists, alternative practitioners, acupuncture, and neurologists. The right eye was at risk of drying out, and the sense of taste was strange due to the numbness. \\
+		In the end, the author is grateful to have faced all these challenges with a lot of learnings and completed this work despite all its difficulties.
+		
+		% Learning...
+		
 	
 	
 	

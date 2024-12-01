@@ -1,0 +1,30 @@
+\chapter{Customization Parameters in Unreal Engine 5 Data Generator}
+\label{appendix:custom-params-ue5}
+	The data generator in Unreal Engine 5 is very flexible and usable for many different cases. It has 24 parameters, which allow customized usage for data generation. The 24 parameters are listed below, each with a short description of its functionality/effect.
+
+	\begin{itemize}
+		\item \textbf{Single Shot:} Is a bool value that decides if the data generator should only take a single picture with the objects currently laying in the bin-box or make a standard data generation with object spawning. The single-shot mode allows a custom scene without the features of the data generator.
+		\item \textbf{Mesh Table:} Defines the data table of shapes. This adds more flexibility to the usage.
+		\item \textbf{Material Table:} Defines the data table of materials. This table allows a quick switch of the materials.
+		\item \textbf{Background Table:} A data table of materials for the background and the bin-box.
+		\item \textbf{Random Indexing:} Decides if the materials and shapes of the objects should be chosen randomly or in order.
+		\item \textbf{Duplicate Meshes:} Whether to allow duplicate shapes. It only matters if the shape data table has duplicate elements.
+		\item \textbf{Duplicate Materials:} Whether to allow duplicate materials. It only matters if the material data table has duplicate elements.
+		\item  \textbf{Start Image Counter:} Defines the image to start with. This is useful when exiting the data generator and continuing with an already existing dataset.
+		\item \textbf{Start Material Amount Index:} Sets the start point in the **Material Amounts** array. This helps skip an already existing dataset.
+		\item \textbf{Start Mesh Amount Index:} Sets the start point in the **Mesh Amounts** array. This helps skip an already existing dataset.
+		\item \textbf{Model Amounts:} An array of integer values defines the number of shapes. For example, [1, 10] will create two datasets, one using only one shape and another using ten shapes.
+		\item \textbf{Material Amounts:} An array of integer values defines the number of materials. For example, [1, 10] will create two datasets, one using only one material and another using ten materials.
+		\item \textbf{Model Min Amounts:} An array that defines the start index for the shapes. So, it is possible to define a range of shapes from the mesh table.
+		\item \textbf{Material Min Amounts:} An array that defines the start index for the materials. So, it is possible to define a range of materials from the material table.
+		\item \textbf{Object Amount MIN:} Defines the minimum amount of objects per scene.
+		\item \textbf{Object Amount MAX:} Defines the maximum amount of objects per scene.
+		\item \textbf{Data Amount Per Dataset:} Sets the amount of scenes per dataset. 
+		\item \textbf{Image Width:} Sets the width of the rendered image.
+		\item \textbf{Image Height:} Sets the height of the rendered image.
+		\item \textbf{Use Dual Dir Format:} This boolean decides whether to create only three folders and every image have a unique name or to create a folder for every scene.
+		\item \textbf{Time Limit:} Defines a time limit in seconds before the scene gets frozen and a picture is taken.
+		\item \textbf{Max Size:} Defines the maximum size of an object.
+		\item \textbf{Min Size:} Defines the minimum size of an object.
+		\item \textbf{Data Save Path:} Describes the path where the datasets should get created as a string.
+	\end{itemize}

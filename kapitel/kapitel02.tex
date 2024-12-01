@@ -39,20 +39,22 @@
 		This paper shows, among other things, practical results and shows if research in generalization, bias, and sim-to-real is reproducible in this specific practical use-case.\\
 		Related work in this context is "Can Biases in ImageNet Models Explain Generalization?" \cite{Gavrikov2024}, "Learning RGB-D Feature Embeddings for Unseen Object Instance Segmentation" \cite{Xiang2021}, "Bin-picking of novel objects through category-agnostic-segmentation: RGB matters" \cite{Raj2023}, "Benchmarking of deep learning algorithms for 3D instance segmentation of confocal image datasets" \cite{Kar2022}, "Towards Synthetic Data: Dealing with the Texture-Bias in Sim2real Learning" \cite{Tabak2023}, "ImageNet-trained CNNs are biased towards texture; increasing shape bias improves accuracy and robustness" \cite{Geirhos2022} and "Shape-biased CNNs are Not Always Superior in Out-of-Distribution Robustness" \cite{Qiu2024}.\\
 		These papers are only partwise related to this study and are already discussed in section \ref{sec:state-of-the-art}.
-		For the sim-to-real transfer, a comparison with the "Learning RGB-D Feature Embeddings for Unseen Object Instance Segmentation" \cite{Xiang2021} paper is done because the work also uses Mask R-CNN \cite{Kaiming2017} and varies with RGB and RGBD as input data. Moreover, it calculates metrics on the OCID dataset \cite{Suchi2019}, an available dataset suitable for bin-picking. The quantity variation is missing.
+		For the sim-to-real transfer with the here proposed dataset, a comparison with another study's results are not possible due to the fact, that it is a novel, here proposed, dataset. The also used OCID dataset \cite{Suchi2019} is used more widely and most similar is the "Learning RGB-D Feature Embeddings for Unseen Object Instance Segmentation" \cite{Xiang2021} paper. It also uses Mask R-CNN \cite{Kaiming2017} and varies with RGB and RGBD as input data. The methodology and metrics in this paper are used differently, thus a direct comparison is not possible. %, but it can give a rough impression and help through the evaluation.
+		
+		% with the "Learning RGB-D Feature Embeddings for Unseen Object Instance Segmentation" \cite{Xiang2021} paper is done because the work also uses Mask R-CNN \cite{Kaiming2017} and varies with RGB and RGBD as input data. Moreover, it calculates metrics on the OCID dataset \cite{Suchi2019}, an available dataset suitable for bin-picking. The quantity variation is missing.
 	
 	
 	\section{Hypothesis Statement}
 	\label{sec:hypothesis-statement}	
-		Through 3 experiments, this study will prove or disprove the following three claims. One for the core focus depth, one claim for the core focus quantity, and another for the influence from depth and quantity together: 
+		Through 3 experiments, this study will try to prove or disprove the following two claims. One for the core focus depth, one claim for the core focus quantity, and another for the influence from depth and quantity together: 
 		\begin{enumerate}
 			\item "Combining RGB and depth data combines texture and shape bias, leading to better generalization and sim-to-real ability." % better instance segmentation results
 			\item "More distinction in shapes leads to higher shape awareness, better generalization, and sim-to-real ability. Furthermore, more distinction in texture leads to higher texture awareness, better generalization, and sim-to-real ability."
-			\item "When using RGB-D as input, less unique shapes and textures are needed for the same instance segmentation accuracy as using only RGB as Input."
+			%\item "When using RGB-D as input, less unique shapes and textures are needed for the same instance segmentation accuracy as using only RGB as Input."
 		\end{enumerate}
 		The 1. claim was chosen through the findings of a bias towards texture in instance segmentation \cite{Theodoridis2022} and the fact that depth data only contains shape information. In that way, the \ac{dnn} could be encouraged to use shape information more for decision-making. In addition, more balanced decision-making between texture and shape information could lead to better results \cite{Li2021}\cite{Co2021}\cite{Chung2023}.\\
 		For the 2. claim, there is no foundation for the claim, apart from the general fact that \ac{dnn}s (and \ac{cnn}s specifically) need a huge amount of data to generalize well. That could mean that more different shapes and textures also increase the ability to generalize, bridge from sim to real, and probably increase the decision-making towards shape/texture.\\
-		There is also no foundation for the 3. claim, except due to the additional information about shape and the probably increased shape awareness, the \ac{dnn} may need fewer different shapes and textures to achieve a similar precision and generalization as the \ac{dnn} trained with only RGB images and more different shapes and textures in the train-data.
+		%There is also no foundation for the 3. claim, except due to the additional information about shape and the probably increased shape awareness, the \ac{dnn} may need fewer different shapes and textures to achieve a similar precision and generalization as the \ac{dnn} trained with only RGB images and more different shapes and textures in the train-data.
 	
 	
 

@@ -1,10 +1,12 @@
 \chapter{Methodology and Implementation}
 \label{chap:kapitel3}
-	To find answers about the previous stated hypotheses in section \ref{sec:hypothesis-statement}, an experimental research design was chosen. An experimental research design suits well to this kind of hypothesis, and other designs would not fit such practical questions. This study proposes a new synthetic dataset for instance segmentation, focusing on bin-picking as domain. The dataset uses the Unreal Engine 5.4.4 \cite{ue5} with hyper-realistic textures and shapes to create the data for the experiments as described in section \ref{sec:data}.\\
+	% To find answers about the previous stated hypotheses in section \ref{sec:hypothesis-statement}, an experimental research design was chosen. An experimental research design suits well to this kind of hypothesis, and other designs would not fit such practical questions. 
+	This study proposes a new synthetic dataset for instance segmentation, focusing on bin-picking as domain. The dataset uses the Unreal Engine 5.4.4 \cite{ue5} with hyper-realistic textures and shapes to create the data for the experiments as described in section \ref{sec:data}.\\
 	To apply instance segmentation the widely used Mask R-CNN \cite{Kaiming2017} from PyTorch \cite{pytorch} is used \ref{sec:ai-model}.\\
 	The coding for data preparation, \ac{dnn} training, and inference was done in Visual Studio Code \cite{vscode}, a flexible and feature-rich \ac{ide}. The data generation was programmed in the blueprint system from Unreal Engine 5 \cite{ue5} in the form of visual programming \cite{Romero2022}.\\
 	For managing the Python environments, anaconda \cite{anaconda} got used and greatly impacted the workflow.\\
-	The training and inference of all \ac{dnn}s and experiments have been done on three separate remote computers. One Linux-based computer with SSH and X11vnc remote connection from Optonic \cite{optonic} with an NVIDIA RTX 4090 as \ac{gpu}. And two Windows-based computers from Shadow-Tech \cite{shadow}, both with an NVIDIA RTX A4500.
+	The training and inference of all \ac{dnn}s and experiments have been done on three separate remote computers. One Linux-based computer with SSH and X11vnc remote connection from Optonic \cite{optonic} with an NVIDIA RTX 4090 as \ac{gpu}. And two Windows-based computers from Shadow-Tech \cite{shadow}, both with an NVIDIA RTX A4500.\\
+	Furthermore this study proposes four in-distribution datasets and one real-world dataset for testing performance and sim-to-real ability, as described in more detail in section \ref{sec:test-data}.
 
 	% \section{Tools and Environment}    % Tools and Environment
 	% \label{sec:tools-and-environment}
@@ -13,17 +15,18 @@
 	
 	\section{AI-Model}
 	\label{sec:ai-model}
-		Starting with a summary about the used \ac{dnn}, Mask R-CNN \cite{Kaiming2017}. Notice that every implementation of Mask R-CNN can vary in a few points, but the core functionality remains the same.\\
+		Starting with a summary about the used \ac{dnn}, Mask R-CNN \cite{Kaiming2017}. Notice that every implementation of Mask R-CNN can vary in a few points, but the core functionality remains the same.
 		Mask R-CNN is the name of a \ac{dnn}, which is historical for instance segmentation. It builds up from Faster R-CNN \cite{Ren2016}, uses the ability to detect objects, and adds the creation of masks for every object. It is a widely adopted architecture and shines with its flexible nature and precise masks.\\
-		To understand the fundamentals of this \ac{dnn}, it follows brief explanations about the underlying elements followed by the composition of these elements.\\
-		\textbf{\ac{cnn}:} Convolutional Neural Networks are key architectures in modern computer vision. It detects spatial features and consists of convolution layers, which convolute images using filters or kernels to detect features like edges, texture, or other patterns and of pooling layers, which reduce the size of the features by taking only the maximal value from every area and uses activation functions to be able to map non-linear functions \cite{Oshea2015}.\\
-		\textbf{ResNet:} Residual Networks are special types of \ac{cnn}s and constitute the backbone of Mask R-CNN. It takes on the feature extraction and is most likely pre-trained. It uses skip connections to ensure the ability to generalize well in deeper layers. Output is a dense version of the origin image, which contains the features from it, called feature-map \cite{He2015}.\\
-		\textbf{\ac{fpn}:} Feature Pyramid Networks are used to get feature maps on different scales for object detection. The output from multiple ResNet layers is used with \ac{cnn}s to calculate new feature maps. In addition, it creates (also with \ac{cnn}s) a hierarchical structure (like a pyramid) with features in different resolutions and semantic \cite{Lin2017}. This allows to create masks also for very small and for very big objects.\\
-		\textbf{\ac{rpn}:} Region Proposal Networks uses feature-maps, for example, from ResNet or from \ac{fpn}, to build proposals that could contain objects called \ac{roi}s. First, the \ac{rpn} creates many anchor boxes for every X pixel. Then, a neural network classifies probabilities for every anchor box and only keeps the ones with high probability. Next up, a regression model refines the remaining anchor boxes. At last, the \ac{roi}s get filtered through \ac{nms}, which first filters the boxes with their scores, then removes boxes with too high \ac{iou}. This step is important because one object can have multiple anchor boxes, which is not wanted \cite{Ren2016}.\\
-		\textbf{\ac{roi} Align:} The \ac{roi} Align first combines the anchor boxes with the Feature-Maps (here just called \ac{roi}s). Since neural networks need the same input size and the \ac{roi}s can differ in width and height, the \ac{roi}s need to get resized (aligned) with as few information reductions as possible. \ac{roi} Align is one method to resize images without much information loss. It lays grids over the \ac{roi}s and uses precise float values for the positions, which leads to less information loss. Then a bilinear interpolation is applied to get the new resized \ac{roi}s \cite{Kaiming2017}.\\
-		\textbf{Object classification and bounding box regression:} A \ac{fc} is used for classification and bounding box regression. The \ac{fc} have a softmax layer to predict the class of the \ac{roi}s (often only background and one other object class). Moreover, a linear regression layer improves the bounding boxes for every \ac{roi} \cite{Ren2016}.\\
-		\textbf{\ac{fcn}:} A fully convolutional neural network is at last used for the prediction of the \ac{roi}'s masks \cite{Kang2014}.
-		\newpage
+		To understand the fundamentals of this \ac{dnn}, it follows brief explanations about the underlying functionality of the Mask R-CNN followed by a summary to understand the whole process.\\
+		\textbf{Residual Networks} (short ResNet) are the first part of Mask R-CNN's architecture. The network is a special type of \ac{cnn}s. \ac{cnn} are key architectures in modern computer vision. They detect spatial features and consist of convolution layers, which convolute images using filters or kernels to detect features like edges, texture, or other patterns, and of pooling layers, which reduce the size of the features by taking only the maximal value from every area and uses activation functions to be able to map non-linear functions \cite{Oshea2015}. The ResNet takes on the feature extraction and is most likely pre-trained. It uses skip connections to ensure the ability to generalize well in deeper layers. Output is a dense version of the origin image, which contains the features from it, called feature-map \cite{He2015}. Thus, the ResNet is the so-called backbone of the Mask R-CNN.\\
+		Next, these feature maps get extended through a \textbf{\acl{fpn}} (short \ac{fpn}). The \ac{fpn} is used to get the feature maps on different scales to extract features from larger and smaller objects. The output from multiple ResNet layers is used with \ac{cnn}s to calculate new feature maps. In addition, it creates (also with \ac{cnn}s) a hierarchical structure (like a pyramid) with features in different resolutions and semantic \cite{Lin2017}. The \ac{fpn} also belongs to the backbone of the Mask R-CNN, since it also extracts features.\\
+		After extracting the feature maps on different scales, a \textbf{\acl{rpn}} (short \ac{rpn}) uses these feature maps to build proposals that could contain objects called \ac{roi}s. First, the \ac{rpn} creates many anchor boxes for every X pixel. Then, a neural network classifies probabilities for every anchor box and only keeps the ones with high probability. Next up, a regression model refines the remaining anchor boxes. At last, the \ac{roi}s get filtered through \ac{nms}, which first filters the boxes with their scores, then removes boxes with too high \ac{iou}. This step is important because one object can have multiple anchor boxes, which is not wanted \cite{Ren2016}.\\
+		One step is left to predict the mask, bounding box, and object class. These predictions require a fixed size of input images (feature maps/\ac{roi}s), but the \ac{roi}s can have different sizes, so a \textbf{\ac{roi} Align} is used. The \ac{roi} Align first combines the anchor boxes with the Feature-Maps (here just called \ac{roi}s). \ac{roi} Align is one method to resize images without much information loss, which is vital for further precise processing. It lays grids over the \ac{roi}s and uses precise float values for the positions, which leads to less information loss. Then a bilinear interpolation is applied to get the new resized \ac{roi}s \cite{Kaiming2017}.
+		\clearpage
+		One of the heads of Mask R-CNN is the {Object classification and bounding box regression}. A \ac{fc} is used for classification and bounding box regression. The \ac{fc} have a softmax layer to predict the class of the \ac{roi}s (often only background and one other object class). Moreover, a linear regression layer improves the bounding boxes for every \ac{roi} \cite{Ren2016}.\\
+		% Since neural networks need the same input size and the \ac{roi}s can differ in width and height, the \ac{roi}s need to get resized (aligned) with as few information reductions as possible.
+		Lastly, a \textbf{fully convolutional neural network} (short \ac{fcn}) is used for the prediction of the \ac{roi}'s masks \cite{Kang2014}.\\
+		\\
 		The procedure of instance segmentation with Mask R-CNN in short:
 		\begin{enumerate}
 			\item Feature-Map creation with Backbone (ResNet + FPN).
@@ -43,7 +46,9 @@
 		\end{figure}
 		
 		This work uses the torchvision implementation from PyTorch \cite{Torchvision}. It is a stable, professional implementation and works with modern graphic cards.\\
-		Previously, the famous tensorflow implementation from Matterport \cite{Matterport} was used, but the implementation changed due to issues with newer graphic cards.\\
+		Previously, the famous tensorflow implementation from Matterport \cite{Matterport} was used, but the implementation changed due to issues with newer graphic cards. Section \ref{sec:challenges} covers more of the challenges and learnings.
+		
+		\clearpage
 		There was still much coding to make the \ac{dnn} work as intended. The Python file can be controlled by parameters and is well structured.\\
 		One important part is the data loader, which first verifies the data, meaning it checks if there is a solution mask for every image and a depth image (if using depth). Finally, it finds the pixel value used for the background.\\
 		During the training process, it loads the RGB image, the solution mask, and the depth image optionally. It also extracts a list of objects and bounding boxes from the solution mask. Data augmentations are significant for the robustness of the \ac{dnn}. These are random transformations and manipulation steps, including flipping, cropping, rotating, blurring, and adding noise to the image. A special data augmentation was applied to add more variation to the background since the background has only two different colors. The background augmentation is listed in \ref{lst:bg-augmentation} since it is not a custom data augmentation. The background augmentation can add noise, a checkerboard pattern, a color gradient, or a color shift. The chosen effect will only be applied to the background using the segmentation masks. \\
@@ -154,9 +159,9 @@ class Random_Background_Modification:
 				return result, depth_img, mask_img
 		\end{lstlisting}
 		
+		\clearpage
 		The training function needed experiment tracking, logging, printouts, learn rate scheduling, optimization, model loading, and more. For experiment tracking, mlflow and tensorboard were implemented. Both are helpful tools for tracking training and optimizing the training process. For learn rate scheduling, a simple custom scheduler was chosen with warm-up steps to first make small steps in the correct direction and then be able to increase the learning rate. Choosing a high learning rate at the beginning would lead to swinging up weight over-adjustments. \\
 		The model loading and creation process was done without effort through the simple and well-functioning PyTorch implementation. The first layer gets optionally adjusted to add a depth channel to the input image. There is also an adjustment at the loss weights to weigh the segmentation more. The \acl{nms} got adjusted due to the clutter environments in bin picking. Listing \ref{lst:model-loading} shows the loading and adjustment. Notice how simple it is to adjust the architecture. The \ac{dnn} loading function also prints out every layer and a summary of the layers, which is a fascinating insight into the architecture.
-		\clearpage
 		
 		\begin{lstlisting}[language=Python,caption=Loading function of Mask R-CNN using torchvision, label=lst:model-loading]
 def load_maskrcnn(
@@ -183,6 +188,7 @@ def load_maskrcnn(
 				kernel_size = model.backbone.body.conv1.kernel_size
 				stride = model.backbone.body.conv1.stride
 				padding = model.backbone.body.conv1.padding
+				
 				
 				# Create new conv layer with 4 channels
 				new_conv1 = torch.nn.Conv2d(4, out_features,
@@ -222,6 +228,8 @@ def load_maskrcnn(
 				model.load_state_dict(state_dict=torch.load(weights_path, 
 																												weights_only=True)) 
 		
+		
+		
 		# printing the architecture
 		model_str = "Parameter of Mask R-CNN:"
 		model_parts = dict()
@@ -235,49 +243,22 @@ def load_maskrcnn(
 		
 		\ac{sgd} with Nesterov-Momentum \cite{Botev2016} was used as learn rate optimizer. \ac{sgd} is known for its good generalization and preciseness but also for its slowness. The Nesterov-Momentum was used to increase convergence speed and stabilize the process.\\
 		The train loop itself is a typical PyTorch train loop. \\
-		\clearpage
 		Lastly, the inference is essential to use the \ac{dnn}. The same data loader can be used for the inference due to its flexibility. The inference can process multiple images and create optional visualizations from the created mask and the ground truth (if existing). Exceptional is the feature of visualizing in-between inference steps, as the feature maps from the \ac{fpn} or the \ac{roi} align. For that, hooks were implemented, which call a function when the layer runs. The hook function saves the output of the layer in a dictionary. For the visualization, it was tricky to handle all the different sizes. It is clear to see every described step of the network and makes it sufficiently coherent; thus, listing \ref{lst:inference-insight} shows the described code for the hooking and the visualization, and appendix \ref{appendix:inference-insights} shows samples from one example inference with the network insights.\\
 		Additionally, given the ground truth, many different metrics can be calculated during the inference. The inference result is saved as a gray image or a numpy array. The whole process has a print-out for information about the progress.\\
 		The coding for the training and inference includes about 66 defined functions, 14 defined classes, one global keyword, 33 imports, 794 called functions and classes, 50 for-loops, 223 if statements, 194 bool operations, and 182 arithmetic operations.
 	
+		\clearpage
 	
 	
-	
-	\section{Data}
+	\section{Train Data}
 	\label{sec:data}
 		Nine datasets were created with Unreal Engine 5 \cite{ue5} for the experiments. Each has RGB, mask, and depth images; there are 20.000 images per dataset (60.000 images counting RGB, depth and mask separately). All datasets together need 500-600 GB memory space. The resolution of the images is Full-HD (1920 x 1080). One dataset needed about two days to complete the generation process. Appendix \ref{appendix:traindata-examples} holds examples for every generated dataset.\\
 		The visual program in Unreal Engine 5 first makes adjustments to the background, bin box, lighting, and camera. Then, random materials and shapes gets combined and spawned in the bin box. The Materials and Shapes are used from Quixel Megascans \cite{Quixel}, a collection of high-quality assets. Samples of these shapes are available at the appendix \ref{appendix:shapes-for-training} and sample materials/textures are viewed in appendix \ref{appendix:materials-for-training}.\\
-		An RGB and depth image is rendered and saved using a structural name convention. Next, every object gets a unique color and a new material with that color, and the background and bin-box get a black color. The image is now rendered with a base color renderer, which only takes the base color of every object without any exposure or other effect; the result is an RGB image with 0 as the background, and every object has a unique color. This process will be repeated 20.00 times, and the list of materials and shapes is fixed during this time. The list of materials and shapes is adjusted by switching to the next dataset, and the process starts from new.\\
+		An RGB and depth image is rendered and saved using a structural name convention. The depth image is scaled and converted to the bit-depth of 8; where the ground of the box a high value, near or equal 255, has and the closer objects come, the closer they get to 0 (black).\\
+		Next, every object gets a unique color and a new material with that color, and the background and bin-box get a black color. The image is now rendered with a base color renderer, which only takes the base color of every object without any exposure or other effect; the result is an RGB image with 0 as the background, and every object has a unique color. This process will be repeated 20.00 times, and the list of materials and shapes is fixed during this time. The list of materials and shapes is adjusted by switching to the next dataset, and the process starts from new.\\
 		\\
 		It follows a more in-depth description of visual code for data generation. Only the most important parts can be covered. The code is too massive to show everything in this work here.\\
-		The data generator has 24 parameters for customization, as listed below.
-		\begin{itemize}
-			\item \textbf{Single Shot:} Is a bool value that decides if the data generator should only take a single picture with the objects currently laying in the bin-box or make a standard data generation with object spawning. The single-shot mode allows a custom scene without the features of the data generator.
-			\item \textbf{Mesh Table:} Defines the data table of shapes. This adds more flexibility to the usage.
-			\item \textbf{Material Table:} Defines the data table of materials. This table allows a quick switch of the materials.
-			\item \textbf{Background Table:} A data table of materials for the background and the bin-box.
-			\item \textbf{Random Indexing:} Decides if the materials and shapes of the objects should be chosen randomly or in order.
-			\item \textbf{Duplicate Meshes:} Whether to allow duplicate shapes. It only matters if the shape data table has duplicate elements.
-			\item \textbf{Duplicate Materials:} Whether to allow duplicate materials. It only matters if the material data table has duplicate elements.
-			\item  \textbf{Start Image Counter:} Defines the image to start with. This is useful when exiting the data generator and continuing with an already existing dataset.
-			\item \textbf{Start Material Amount Index:} Sets the start point in the **Material Amounts** array. This helps skip an already existing dataset.
-			\item \textbf{Start Mesh Amount Index:} Sets the start point in the **Mesh Amounts** array. This helps skip an already existing dataset.
-			\item \textbf{Model Amounts:} An array of integer values defines the number of shapes. For example, [1, 10] will create two datasets, one using only one shape and another using ten shapes.
-			\item \textbf{Material Amounts:} An array of integer values defines the number of materials. For example, [1, 10] will create two datasets, one using only one material and another using ten materials.
-			\item \textbf{Model Min Amounts:} An array that defines the start index for the shapes. So, it is possible to define a range of shapes from the mesh table.
-			\item \textbf{Material Min Amounts:} An array that defines the start index for the materials. So, it is possible to define a range of materials from the material table.
-			\item \textbf{Object Amount MIN:} Defines the minimum amount of objects per scene.
-			\item \textbf{Object Amount MAX:} Defines the maximum amount of objects per scene.
-			\item \textbf{Data Amount Per Dataset:} Sets the amount of scenes per dataset. 
-			\item \textbf{Image Width:} Sets the width of the rendered image.
-			\item \textbf{Image Height:} Sets the height of the rendered image.
-			\item \textbf{Use Dual Dir Format:} This boolean decides whether to create only three folders and every image have a unique name or to create a folder for every scene.
-			\item \textbf{Time Limit:} Defines a time limit in seconds before the scene gets frozen and a picture is taken.
-			\item \textbf{Max Size:} Defines the maximum size of an object.
-			\item \textbf{Min Size:} Defines the minimum size of an object.
-			\item \textbf{Data Save Path:} Describes the path where the datasets should get created as a string.
-		\end{itemize}
-		
+		The data generator has 24 parameters for customization, as listed in appendix \ref{appendix:custom-params-ue5}.\\
 		The initialization nodes only run once after starting the data generation process. First, it checks if the previously listed user parameters are correct. Verification is beneficial to detect early problems and mistakes. Then, every variable receives a reset to ensure everything is ready for the data generation. Figure \ref{img:ue5_init} shows this initial code.
 		
 		\begin{figure}[h]
@@ -318,24 +299,164 @@ def load_maskrcnn(
 		\\
 		The nine in this work proposed datasets called \textbf{3xM} ("triple m") for \textbf{m}odel-\textbf{m}aterial-\textbf{m}ixture which refers to the combinations of different unique amounts of shapes and textures.
 		
-		
-	\clearpage
-	\section{Challenges}
-	\label{sec:challenges}
-		During this study, many challenges occur, and maybe the solutions of them can help in the future.\\
-		The journey started with an NVIDIA GeForce GTX 1080 Ti graphic card and Mask R-CNN implementation from Matterport \cite{Matterport}. The implementation from Matterport only works with old versions of Tensorflow (Tensorflow was one given restriction), so the first task was to update the code from Matterport to a newer version. A strange, unwanted behavior occurred, where loading the same weights led to different, random results. Debugging was difficult due to the massive size of the \acl{dnn}. Switching to an already finished upgraded Mask R-CNN seemed to make more sense, but all five tried implementations did not want to work properly. So, the next approach was to try the old version of Mask R-CNN from Matterport. This old implementation came with massive problems with the newer Linux system and the old Python version needed for the Tensorflow version. The solution was virtual python environments with Anaconda \cite{anaconda}. These conda environments worked like a breeze and were also easy to replicate. This version worked, but the training had to stop since the graphic card changed to the newer NVIDIA RTX4090, and the Tensorflow version would not work on this new \ac{gpu}. It was finally time to switch to another architecture. YOLACT \cite{Bolya2019} was now attempted. First, an unofficial Tensorflow version, but quickly changed to the official PyTorch version; thus, there was already much time spent, and it seemed to be not working very well again, so the restriction of Tensorflow was lifted. This official YOLACT implementation also did not work with the new \ac{gpu} and was upgraded. During the upgrade, the code underwent tremendous changes to make it more accessible in Python; before, it was programmed to be used with parameters and not within Python. After all that work was done, the \ac{dnn} seemed to work, but it turned out that something was wrong with the network. It always found too many masks, and debugging was a large endeavor. At that time, only about one to two months were left (the data generation also needed much time to get work), so the decision was to try out the Mask R-CNN again, but with PyTorch's official implementation. PyTorch's implementation worked surprisingly well and quickly. \\
-		The next challenge is the most common all over the world: time. There was little time left, but the \ac{dnn} needed much time to train. The ideal would be 100 to 500 epochs for the best results. With 18 \ac{dnn} to train and a time of 3 days with 100, the study would take 54 days only for the training.\\
-		So, a second remote computer got leased from \cite{shadow}, and epochs were reduced to 20. The results were not optimal and not acceptable. So, a third remote computer was leased, and the epochs increased to 40. Three remote computers, each six \ac{dnn} to train with about 1 to 2 days computation time per network, make about two weeks to complete the whole training process. \\
-		\\
-		Many other challenges appeared between these challenges, like operating system failures, changing hardware, SSH remote connection issues, storage shortage, \ac{gpu} tribe difficulties,  system-specific inconsistencies, and many more.\\
-		\\
-		Another challenging part of this study was the creation of the synthetic datasets. The proposed data generator in Unreal Engine 5 needed much work and a finishing touch to be in a ready-to-use state. It started with collecting enough shapes and materials of a high quality and different appearance and continued with the programming of the data generator itself. It was challenging to get along with the - for games designed - Unreal Engine 5 and to render and save a virtual camera. Also, the creation of the segmentation masks took work. Moreover, many bugs occurred with the spawning objects, like rotating too fast, wrong scaling and falling out of the box. Most bugs were fixed, but the data generation is still imperfect.\\
-		In the end, the generation of 9 datasets needed a long time, about ten days, and every small change needed a restart of the whole generation process.\\
-		\\
-		To carry it to the extreme, in the middle of this study, a personal challenge from the author popped up out of nowhere. The right side of the author's face experienced complete paralysis called peripheral facial paralysis. He visits many medical institutions for several months, from hospitals to house doctors, otologists, alternative practitioners, acupuncture, and neurologists. The right eye was at risk of drying out, and the sense of taste was strange due to the numbness. \\
-		In the end, the author is grateful to have faced all these challenges with a lot of learnings and completed this work despite all its difficulties.
-		
 
+	\section{Test Data}
+	\label{sec:test-data}
+		Four in-distribution test datasets with 100 RGB, depth, and mask images were created with the methodology from section \ref{sec:data}.
+		The datasets differ in the novelness of their shapes and textures. There is one test dataset with known shapes and known textures, one with unknown shapes and known textures, one with known shapes and unknown textures, and one with unknown shapes and unknown textures. This allows to test not only the performance on in-distribution data but also shows the generalization ability of shapes and textures.\\
+		\\
+		This study also proposes a real-world dataset in the bin-picking domain. The dataset consists of 70 labeled RGB-D images as shown in appendix \ref{appendix:testdata-examples-simtoreal}. All images were made with the \href{https://www.optonic.com/produkte/ensenso/b57/}{B57-2 camera} from Optonic GmbH \cite{optonic} as shown in figure \ref{img:camera} and consist of 2472 x 2064 pixels.
+		\begin{figure}[h]
+			\centering
+			\includegraphics[width=0.6\textwidth]{kapitel3/camera_B57-4.jpg}
+			\caption[RGB-D Camera Ensenso B57-2 from Optonic. More informations on: \url{https://www.optonic.com/produkte/ensenso/b57/}]{RGB-D Camera Ensenso B57-2 from Optonic. More informations on: \url{https://www.optonic.com/produkte/ensenso/b57/}}
+			\label{img:camera}
+		\end{figure}
+		\FloatBarrier
+		The setup was a simple black bin with a mat (foam-like) inside and the camera attached to a table, as shown in figure \ref{img:real-data-setup}.
+		Twenty-two unique objects were used in an organized way to produce the data scenes: twelve industrial parts and ten everyday consumer goods. In total, 62 objects were used. The scenes are organized in cluttered/uncluttered, solo/mixed (only one type of unique object or different unique object types), and industrial/product/industrial \& product.
+		\clearpage
+		The objects contain:
+		\begin{itemize}
+			\item 12x Brass Parts
+			\item 9x Complex White Plastic Parts
+			\item 8x Round White Plastic Parts
+			\item 7x Black Metal Mounting Plates
+			\item 5x White T-Form Plastic Parts
+			\item 4x Chocolate Candies (different shapes)
+			\item 3x Smaller Metal Parts
+			\item 3x Small Black Metal Mounting Plates
+			\item 2x Metal Parts
+			\item 1x USB Stick
+			\item 1x Hard Disk
+			\item 1x Screwdriver
+			\item 1x Pen
+			\item 1x Tea
+			\item 1x Instant Noodles
+			\item 1x Nut Mix
+			\item 1x Italian Herbs
+			\item 1x Tissues
+		\end{itemize}
+		Figure \ref{img:real-data-objects} shows all used objects.
+		\begin{figure}[h]
+			\centering
+			\includegraphics[width=0.85\textwidth]{kapitel3/real_data_objects.jpg}
+			\caption[All used objects for real-world data collection.]{All used objects for real-world data collection.}
+			\label{img:real-data-objects}
+		\end{figure}
+		
+		The connection to the camera happened through the network with the NxView Software from Optonic GmbH. Then, every scene was saved in ZIP file format and later loaded as a file camera in NxView, which behaves similarly to a real camera and was used by the Python script in listing \ref{lst:file-camera}. The listing \ref{lst:file-camera} also shows the used scaling for depth information. The depth scaling starts with decreasing all positive values greater than zero to zero since zero should be the ground of the bin (the camera was calibrated before). Next, the depth data is converted from negative to positive space and missing values are replaced with linear interpolation. If there are values greater than 255, a min-max normalization is applied. A stretching method uses the lowest and highest values to cover the whole range of values. Then, the depth data can be converted to integer values with 8-bit depth, which can be saved and used.
+		
+		\begin{lstlisting}[language=Python,caption=Capturing images from a file camera with depth image scaling, label=lst:file-camera]
+import os
+import json
+import zipfile
+
+import numpy as np
+import cv2
+from scipy.interpolate import griddata
+
+from nxlib import NxLib, Camera, NxLibItem
+from nxlib.context import NxLib, StereoCamera
+from nxlib.command import NxLibCommand
+from nxlib.constants import *
+
+with open("./params.json", "r") as file:
+		params = json.loads(file.read())
+
+os.makedirs("./data", exist_ok=True)
+os.makedirs("./data/rgb", exist_ok=True)
+os.makedirs("./data/depth", exist_ok=True)
+
+def interpolate_nan(image):
+		x, y = np.indices(image.shape)
+		nan_mask = np.isnan(image)
+		
+		# Coordinates of valid (non-NaN) points
+		valid_coords = np.array((x[~nan_mask], y[~nan_mask])).T
+		# Values of valid points
+		valid_values = image[~nan_mask]
+		# Coordinates of NaN points
+		nan_coords = np.array((x[nan_mask], y[nan_mask])).T
+		
+		# Interpolate NaN points
+		interpolated_values = griddata(valid_coords, valid_values, nan_coords, method='linear')
+		
+		# Fill the interpolated values back into the image
+		result = image.copy()
+		result[nan_mask] = interpolated_values
+		
+		return result
+
+serial_number = "all_scenes_1"
+
+with NxLib(), StereoCamera(serial_number) as camera:
+		camera.get_node()[ITM_PARAMETERS].set_json(json.dumps(params[ITM_PARAMETERS]), True)
+		
+		first_image = None
+		counter = 0
+		while True:
+				camera.capture()
+				camera.rectify()
+				camera.compute_disparity_map()
+				camera.compute_point_map()
+				
+				# get unique name
+				name = "optonic_bin-picking_dataset_00.png"
+				name_counter = 1
+				while name in os.listdir("./data/rgb"):
+						name = f"optonic_bin-picking_dataset_{name_counter:02}.png"
+						name_counter += 1
+				
+				# calc depth map
+				points = camera.get_point_map()
+				depth_data = points[:,:,2]
+				depth_data = np.minimum(depth_data, 0)
+				depth_data = depth_data + abs(np.nanmin(depth_data))
+				depth_data = interpolate_nan(depth_data)
+				depth_data = depth_data.astype(np.int16)
+				
+				
+				if np.nanmax(depth_data) <= 255:
+						depth_data = depth_data.astype(np.uint8)
+				else:
+						depth_data = ((depth_data - np.nanmax(depth_data)) / 
+														(np.nanmax(depth_data) - np.nanmin(depth_data))
+														).astype(np.uint8)
+						depth_data = (depth_data * 255).astype(np.uint8)
+				
+				min_val = np.min(depth_data)
+				max_val = np.max(depth_data)
+				
+				# Apply linear scaling to stretch the pixel values
+				depth_data = ((depth_data - min_val) / (max_val - min_val)) * 255
+				depth_data = np.uint8(depth_data)
+				
+				# get rgb
+				image = camera.get_texture()
+				image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+				
+				if first_image is None:
+						first_image = image
+				elif np.array_equal(first_image, image):
+						break
+				
+				# save images
+				cv2.imwrite(f"./data/depth/{name}", depth_data)
+				cv2.imwrite(f"./data/rgb/{name}", image)
+				print(f"Successfull extracted image {counter+1}")
+				counter += 1
+		\end{lstlisting}
+		
+		The author hand-labeled every image using a semi-automatic annotation approach with CVAT \cite{cvat}. All images were pre-labeled with the SAM model \cite{Kirillov2023} and manually corrected and adjusted. The annotation software runs entirely on the web and does not require any installments. This procedure enabled a quick annotation process without any troubles.
+	
+		
+		\begin{figure}[h]
+			\centering
+			\includegraphics[width=\textwidth]{kapitel3/real_data_setup.jpg}
+			\caption[Setup for collecting real-world bin-picking data.]{Setup for collecting real-world bin-picking data.}
+			\label{img:real-data-setup}
+		\end{figure}
 
 
 

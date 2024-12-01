@@ -5,41 +5,275 @@
 	\label{sec:results}
 	
 		\subsection{Shape vs. Texture Attention Test}
-			In figure \ref{img:bias-result-input-type}, the results are shown, split into input type (RGB/RGBD) and experiment types (multiple textures and one texture). The RGB models tend to be biased towards texture and the RGBD models are biased more towards shape but still towards texture in the experiment with multiple textures.
+			In figure \ref{img:bias-result-input-type}, the results for the Shape vs. Texture Attention Test are shown, split into input type (RGB/RGBD) and experiment types (multiple textures and one texture). The RGB models tend to be biased towards texture, and the RGBD models are biased more towards shape but still towards texture in the experiment with multiple textures.
 			\begin{figure}[h]
 				\centering
 				\includegraphics[width=\textwidth]{kapitel5/bias_experiment_result_rgb_rgbd.png}
 				\caption[Shape vs. Texture Attention Test results are ordered after the the experiment types multiple textures and one texture. On the left is the mean result of the RGB models, and on the right is the mean result of the RGBD-trained models.]{Shape vs. Texture Attention Test results are ordered after the the experiment types multiple textures and one texture. On the left is the mean result of the RGB models, and on the right is the mean result of the RGBD-trained models.}
 				\label{img:bias-result-input-type}
 			\end{figure}
-			The experiment types differ between 28\%-32\% from each other.\\
+			\FloatBarrier
+			
+			The experiment types differ between 28\%-32\% from each other.
+			\clearpage
 			Another essential view is the result regarding the shape and texture quantity. Figure \ref{img:bias-result-quantity-type} shows this divided result.\\
-			The shape bias decreases with more shapes used; this is in 5 of 6 times the case. The shape bias increases in 3 of 6 cases when the number of textures increases. The models trained with ten shapes and ten textures and the model trained with ten shapes and 80 textures stand out with a high amount of shape-biased decisions- 65\% and 71\%. All other results lay between 54\% and 33\%.
+			The shape bias decreases with more shapes used; this is 5 out of 6 times the case. When the number of textures increases, the shape bias increases in 3 out of 6 cases. The models trained with ten shapes and ten textures and the model trained with ten shapes and 80 textures stand out with a high amount of shape-biased decisions—66\% and 71\%, respectively. All other results lie between 33\% and 54\%  shape-biased decisions.
+			
+			\FloatBarrier
 			\begin{figure}[h]
 				\centering
 				\includegraphics[width=\textwidth]{kapitel5/bias_experiment_result_quantity.png}
 				\caption[Shape vs. Texture Attention Test results are ordered after the quantity of shape and texture. The criterion is described in section \ref{sec:shape-texutre-attention-test}.]{Shape vs. Texture Attention Test results are ordered after the quantity of shape and texture. The criterion is described in section \ref{sec:shape-texutre-attention-test}.}
 				\label{img:bias-result-quantity-type}
 			\end{figure}
+			\FloatBarrier
 		
+		\clearpage
 		\subsection{In-Distribution Performance and Generalization Test}
+			The mean results of all four experiments are compared in figure \ref{img:id-result}. All mean results differ between 82\% - 86\%, where the experiment results with known shapes and known textures are the highest with a mean \ac{iou} of about 86\%. The second highest mean \ac{iou} are the results from the experiment with unknown shapes and known textures. The third highest results came from the experiment with unknown shapes and unknown textures. Furthermore, with about 1\% less mean \ac{iou} than the third highest results, the fourth place is the mean results from the experiment with known shapes and unknown textures.
+			\FloatBarrier
+			\begin{figure}[h]
+				\centering
+				\includegraphics[width=0.8\textwidth]{kapitel5/in_distribtuion_mean_iou_over_experiments.png}
+				\caption[Mean \ac{iou} of every in-distribution test. Every experiment have a statistical significant difference to the results of the other experiment's results.]{Mean \ac{iou} of every in-distribution test. Every experiment have a statistical significant difference to the results of the other experiment's results.}
+				\label{img:id-result}
+			\end{figure}
+			\FloatBarrier
+			
+			The mean \ac{iou} over all in-distribution experiments towards the amount of used shapes and textures seems to increase with more shapes and textures, as figure \ref{img:id-result-quantity} shows. The differences are statistically insignificant and also could be random fluctuations. Still, it is noticeable that there is a light pattern of increasing mean \ac{iou} with increasing amount of shapes and textures.
+			
+			\FloatBarrier
+			\begin{figure}[h]
+				\centering
+				\includegraphics[width=0.8\textwidth]{kapitel5/in_distribtuion_mean_iou_over_quantity_over_all_experiments.png}
+				\caption[Mean \ac{iou} of every in-distribution test sorted towards quantity. The first number on the labels are the amount of shapes and the second number is the amount of textures. There is only a statistical significant difference between the mean \ac{iou}s of 10 shapes and 10 textures and 10 shapes and 80 textures.]{Mean \ac{iou} of every in-distribution test sorted towards quantity. The first number on the labels are the amount of shapes and the second number is the amount of textures. There is only a statistical significant difference between the mean \ac{iou}s of 10 shapes and 10 textures and 10 shapes and 80 textures.}
+				\label{img:id-result-quantity}
+			\end{figure}
+			
+			Overall, the networks trained with an additional fourth depth channel achieved, on average, a slight improvement of around 1.5\% higher mean \ac{iou}, as shown in figure \ref{img:id-result-input}.
+			
+			\begin{figure}[h]
+				\centering
+				\includegraphics[width=0.8\textwidth]{kapitel5/in_distribtuion_mean_iou_over_input_over_every_experiments.png}
+				\caption[Mean \ac{iou} of every in-distribution experiment splitted towards the input type (RGB.only or RGB and depth). The first number of the labels are the shapes. The second number of the labels is the amount of textures.]{Mean \ac{iou} of every in-distribution experiment splitted towards the input type (RGB.only or RGB and depth). The first number of the labels are the shapes. The second number of the labels is the amount of textures.}
+				\label{img:id-result-input}
+			\end{figure}
+			
+			\FloatBarrier
+			
+			When analyzing all experiments across the 18 available networks, the test with known shapes and known textures and the test with known shapes but unknown textures show a maximum difference of only 2.5\% in the mean \ac{iou}. Both experiments also did not have as many statistically significant differences. The experiment with known shapes and known has 31 significant differences, and the experiment with known shapes and unknown textures has 24 significant differences.\\
+			The in-distribution experiment with known shapes and known textures has no significant pattern in the influence of depth and the number of shapes and textures towards the mean \ac{iou}. Figure \ref{img:id-kk-result-quantity} and \ref{img:id-kk-result-input} shows that.
+			
+			\FloatBarrier
+			\begin{figure}[h]
+				\centering
+				\caption{In-Distribution Experiment with known shapes and known textures for quantity and input-type.}
+				\begin{subfigure}{0.45\textwidth}
+					\centering
+					\includegraphics[width=\textwidth]{kapitel5/in_distribtuion_mean_iou_over_quantity_over_known_known_experiments.png}
+					\caption[Mean \ac{iou} of the in-distribution experiment with known shapes and known textures splitted towards the amount of shapes and textures.]{Mean \ac{iou} of the in-distribution experiment with known shapes and known textures splitted towards the amount of shapes and textures. The first number of the labels are the shapes. The second number of the labels is the amount of textures.}
+					\label{img:id-kk-result-quantity}
+				\end{subfigure}
+				\begin{subfigure}{0.45\textwidth}
+					\centering
+					\includegraphics[width=\textwidth]{kapitel5/in_distribtuion_mean_iou_over_input_over_known_known_experiments.png}
+					\caption[Mean \ac{iou} of the in-distribution experiment with known shapes and known textures splitted towards the input type (RGB.only or RGB and depth). The first number of the labels are the shapes. The second number of the labels is the amount of textures.]{Mean \ac{iou} of the in-distribution experiment with known shapes and known textures splitted towards the input type (RGB.only or RGB and depth).}
+					\label{img:id-kk-result-input}
+				\end{subfigure}
+			\end{figure}
+			\FloatBarrier
+			
+			%Conspicuous in the experiment with known shapes and known textures is that the models trained with RGB only data and 10 shapes achieved all between 0.7\% and 2.0\% higher mean \ac{iou} compared to the networks trained with RGB and depth with 160 and 80 shapes (with statistical significance). In addition the network trained with RGB-only and 160 shapes and 80 shapes achieved significant lower mean \ac{iou} from 1.5\% to 2.5\% compared with the networks trained with also RGB-only and 80 shapes and also the model trained with 160 shapes and 80 textures.\\
+			
+			In the experiment with known shapes and unknown textures, more shapes led to a smaller mean \ac{iou} as shown in figure \ref{img:id-ku-result-quantity}. Also noticeable is that the networks with more textures in their train data seem to perform with a higher mean \ac{iou}. Another striking result is that the models trained with RGB-only data performed about 3\% worse in mean \ac{iou} compared to the networks trained with RGB and depth data, as figure \ref{img:id-ku-result-input} shows.
+			
+			\begin{figure}[h]
+				\centering
+				\caption{In-Distribution Experiment with known shapes and unknown textures for quantity and input-type.}
+				\begin{subfigure}{0.45\textwidth}
+					\centering
+					\includegraphics[width=\textwidth]{kapitel5/in_distribtuion_mean_iou_over_quantity_over_known_unknown_experiments.png}
+					\caption[Mean \ac{iou} of the in-distribution experiment with known shapes and unknown textures splitted towards the amount of shapes and textures. The first number of the labels are the shapes. The second number of the labels is the amount of textures.]{Mean \ac{iou} of the in-distribution experiment with known shapes and unknown textures splitted towards the amount of shapes and textures.}
+					\label{img:id-ku-result-quantity}
+				\end{subfigure}
+				\begin{subfigure}{0.45\textwidth}
+					\centering
+					\includegraphics[width=\textwidth]{kapitel5/in_distribtuion_mean_iou_over_input_over_known_unknown_experiments.png}
+					\caption[Mean \ac{iou} of the in-distribution experiment with known shapes and unknown textures splitted towards the input type (RGB.only or RGB and depth).]{Mean \ac{iou} of the in-distribution experiment with known shapes and unknown textures splitted towards the input type (RGB.only or RGB and depth). }
+					\label{img:id-ku-result-input}
+				\end{subfigure}
+			\end{figure}
+			
+			The experiment with unknown shapes and known textures has the most different results. Figure \ref{img:id-result-unknown-known} shows the mean \ac{iou} differences over all 18 networks in this experiment. Results without statistical significance are not visible. The networks trained with only ten shapes lead to a massive lack of mean \ac{iou} compared to most other networks. These models have a 1.3\%-11.4\% less mean \ac{iou}.
+			
+			\begin{figure}[h]
+				\centering
+				\includegraphics[width=\textwidth]{kapitel5/in_distribution_experiment_result_unknown_known.png}
+				\caption[Difference of mean \ac{iou} of in-distribution test with unknown shapes and known textures filtered with statistical significance.]{Difference of mean \ac{iou} of in-distribution test with unknown shapes and known textures filtered with statistical significance.}
+				\label{img:id-result-unknown-known}
+			\end{figure}
+			
+			\FloatBarrier
+			\begin{figure}[h]
+				\centering
+				\caption{In-Distribution Experiment with unknown shapes and known textures for quantity and input-type.}
+				\begin{subfigure}{0.4\textwidth}
+					\centering
+					\includegraphics[width=\textwidth]{kapitel5/in_distribtuion_mean_iou_over_quantity_over_unknown_known_experiments.png}
+					\caption[Mean \ac{iou} of the in-distribution experiment with unknown shapes and known textures splitted towards the amount of shapes and textures.]{Mean \ac{iou} of the in-distribution experiment with unknown shapes and known textures splitted towards the amount of shapes and textures. }
+					\label{img:id-uk-result-quantity}
+				\end{subfigure}
+				\begin{subfigure}{0.4\textwidth}
+					\centering
+					\includegraphics[width=\textwidth]{kapitel5/in_distribtuion_mean_iou_over_input_over_unknown_known_experiments.png}
+					\caption[Mean \ac{iou} of the in-distribution experiment with unknown shapes and known textures splitted towards the input type (RGB.only or RGB and depth).]{Mean \ac{iou} of the in-distribution experiment with unknown shapes and known textures splitted towards the input type (RGB.only or RGB and depth).}
+					\label{img:id-uk-result-input}
+				\end{subfigure}
+			\end{figure}
+		
+			Figure \ref{img:id-uk-result-quantity} confirms this and shows that the mean \ac{iou} increases when the number of shapes rises. The number of textures leads to no statistically significant change.
+			The input type RGB-only or RGB with depth) had no influence on this experiment as figure \ref{img:id-uk-result-input} shows.\\
+			The in-distribution experiment with unknown shapes and textures also has many statistically significant differences towards the lower mean \ac{iou} of networks trained with ten shapes but not as much as in the experiment with unknown shapes and known textures.\\ %Figure \ref{img:id-result-unknown-unknown} shows the mean \ac{iou} differences between all 18 networks.
+			%\FloatBarrier
+			%\begin{figure}[h]
+			%	\centering
+			%	\includegraphics[width=\textwidth]{kapitel5/in_distribution_experiment_result_unknown_unknown.png}
+			%	\caption[Difference of mean \ac{iou} of in-distribution test with unknown shapes and unknown textures filtered with statistical significance.]{Difference of mean \ac{iou} of in-distribution test with unknown shapes and unknown textures filtered with statistical significance.}
+			%	\label{img:id-result-unknown-unknown}
+			%\end{figure}
+			%\FloatBarrier
+			Figure \ref{img:id-uu-result-quantity} shows that the networks in this experiment perform similarly to the experiment with unknown shapes and known textures with the significant change that the amount of texture has now a way the more significant influence of the increment of mean \ac{iou}. This can be well observed at the values "10-10", "10-80", "10-160".\\
+			Another difference to the experiment with unknown shapes and known textures is that the networks using RGB-only achieve an average of about 1,5\% lower mean \ac{iou}, as presented in figure \ref{img:id-uu-result-input}.
+			
+			\FloatBarrier
+			\begin{figure}[h]
+				\centering
+				\caption{In-Distribution Experiment with unknown shapes and unknown textures for quantity and input-type.}
+				\begin{subfigure}{0.4\textwidth}
+					\centering
+					\includegraphics[width=\textwidth]{kapitel5/in_distribtuion_mean_iou_over_quantity_over_unknown_unknown_experiments.png}
+					\caption[Mean \ac{iou} of the in-distribution experiment with unknown shapes and unknown textures splitted towards the amount of shapes and textures. The first number of the labels are the shapes. The second number of the labels is the amount of textures.]{Mean \ac{iou} of the in-distribution experiment with unknown shapes and unknown textures splitted towards the amount of shapes and textures.}
+					\label{img:id-uu-result-quantity}
+				\end{subfigure}
+				\begin{subfigure}{0.4\textwidth}
+					\centering
+					\includegraphics[width=\textwidth]{kapitel5/in_distribtuion_mean_iou_over_input_over_unknown_unknown_experiments.png}
+					\caption[Mean \ac{iou} of the in-distribution experiment with unknown shapes and unknown textures splitted towards the input type (RGB.only or RGB and depth).]{Mean \ac{iou} of the in-distribution experiment with unknown shapes and unknown textures splitted towards the input type.}
+					\label{img:id-uu-result-input}
+				\end{subfigure}
+			\end{figure}
+			\FloatBarrier
+			
+			
+			
 		
 		\subsection{Sim-to-Real Performance Test}
+			The overall experiment achieved only low results compared to the in-distribution dataset. With differences in mean \ac{iou} from 30\%-60\% worse than the results from the same networks in the in-distribution dataset.\\
+			The experiments on the OCID dataset show clearly that the input type of the network was most important. Figure \ref{img:str-ocid} is the mean \ac{iou}s sorted and colored after the input type. RGB-only networks perform, on average, 21.34\% worse than the networks with the additional depth channel.
+			
+			\FloatBarrier
+			\begin{figure}[h]
+				\centering
+				\includegraphics[width=\textwidth]{kapitel5/sim_to_real_experiment_ocid_result_mean.png}
+				\caption[Mean \ac{iou} on OCID dataset of all 18 networks. Colored after RGB and RGBD.]{Mean \ac{iou} on OCID dataset of all 18 networks. Colored after RGB and RGBD.}
+				\label{img:str-ocid}
+			\end{figure}
+			\FloatBarrier
+			
+			Another exciting result is the influence of the shape and texture amount. Figure \ref{img:str-ocid-qunatity} shows that the networks with more shapes in their training do not better. The difference is under 2.5\% mean \ac{iou}. The higher texture amount leads in 5 of 6 cases to a significant rise of the mean \ac{iou}.
+			
+			\FloatBarrier
+			\begin{figure}[h]
+				\centering
+				\includegraphics[width=0.75\textwidth]{kapitel5/sim_to_real_experiment_ocid_result_mean_quantity.png}
+				\caption[Mean \ac{iou} on OCID dataset over shape and texture amount. The first number in the labels stands for the amount of shapes and the second for the amount of textures.]{Mean \ac{iou} on OCID dataset over shape and texture amount. The first number in the labels stands for the amount of shapes and the second for the amount of textures.}
+				\label{img:str-ocid-qunatity}
+			\end{figure}
+			\FloatBarrier
+			
+			Ultimately, the results of the sim-to-real experiment with the Optonic Bin-Picking dataset are entirely different. Figure \ref{img:str-optonic} shows these results, which look like the reversal from the sim-to-real experiment with the OCID dataset. The networks trained with RGB-only data have an average 22.26\% higher mean \ac{iou}. 
+			
+			\FloatBarrier
+			\begin{figure}[h]
+				\centering
+				\includegraphics[width=0.85\textwidth]{kapitel5/sim_to_real_experiment_optonic_result_mean.png}
+				\caption[Mean \ac{iou} on Optonic Bin-Picking dataset of all 18 networks. Colored after RGB and RGBD.]{Mean \ac{iou} on Optonic Bin-Picking dataset of all 18 networks. Colored after RGB and RGBD.}
+				\label{img:str-optonic}
+			\end{figure}
+			\FloatBarrier
+			
+			Increasing the texture amount increases the mean \ac{iou} in 3 of 6 cases, and the shape amount influences the mean \ac{iou} with an impact of 3\%-8\% mean \ac{iou}. The highest average \ac{iou} achieves the networks with 800 shapes as figure \ref{img:str-optonic-qunatity} shows.
+			
+			\FloatBarrier
+			\begin{figure}[h]
+				\centering
+				\includegraphics[width=\textwidth]{kapitel5/sim_to_real_experiment_optonic_result_mean_quantity.png}
+				\caption[Mean \ac{iou} on Optonic Bin-Picking dataset over shape and texture amount. The first number in the labels stands for the amount of shapes and the second for the amount of textures.]{Mean \ac{iou} on Optonic Bin-Picking dataset over shape and texture amount. The first number in the labels stands for the amount of shapes and the second for the amount of textures.}
+				\label{img:str-optonic-qunatity}
+			\end{figure}
+			\FloatBarrier
 
 
 
 	\section{Interpretation of Results}
 	\label{sec:interpretation-of-results}
-		The results meets partwise the expectations, stated in chapter \ref{chap:kapitel3}, but also disagrees on other parts.
+		As hypothesis 1 from section \ref{sec:hypothesis-statement} states, the shape bias increases with depth as another fourth channel. How much is difficult to say because the experiment is not well quantitative measurable and comes with many limitations, which will be covered in section \ref{sec:limitations}. The Shape vs. Texture Attention Test also confirms that the Mask R-CNN with the 3xM dataset is biased towards texture. In some cases, an improvement with RGB depth networks of mean \ac{iou} is given. The results of the experiments lead to the thesis that additional depth data removes the lack of novel textures but does not lead to an increased mean \ac{iou} with novel shapes.\\
+		Thus, depth data does not seem to improve the ability to generalize toward shape bias. Also, the overall generalization did not improve significantly through depth data; another result in the sim-to-real experiment was expected. It is questionable how RGB-depth networks perform on one dataset about 20\% better, and on another (the train data more similar) dataset, it leads to even worse results than the networks that only use RGB as input.
+		\clearpage
+		Does the optimal input type depend on the given dataset? If yes, which property on the dataset influences the performance of the input type?\\
+		This result also leads to the question of whether the depth data in the Optonic Bin-Picking dataset is corrupted. Another scaling can, for example, lead to such a result. However, the depth data from the Optonic Dataset visually looks more similar to the training dataset than the OCID dataset, as figure \ref{img:depth-image-comparison} shows. Moreover, a quantitative sharpness metric was calculated using the laplacian variance with the following results of the depth images:
+		\begin{itemize}
+			\item 3xM Test Dataset known-known RGB ~= 280
+			\item OCID Dataset RGB ~= 654
+			\item Optonic Bin-Picking Dataset RGB ~= 164
+		\end{itemize}
+		The Optonic Bin-picking Dataset is the dataset with the most blur. This could cause massive decreased performance.\\
+		\\
+		This still does not explain why the RGB-only networks perform so well on the Optonic Bin-Picking Dataset but poorly on the OCID dataset.
+		The mean sharpness of the RGB images is listed as follows:
+		\begin{itemize}
+			\item 3xM Test Dataset known-known RGB ~= 471
+			\item OCID Dataset RGB ~= 630
+			\item Optonic Bin-Picking Dataset RGB ~= 310
+		\end{itemize}
+		The proportion of the results is similar to the sharpness of the depth images. One conclusion could be that less sharpness increases RGB-only networks' performance and decreases RGB-D networks' performance.\\
+		Nevertheless, there is another crucial factor that could influence the resolution and general quality of the image. As already stated by research, texture quality is crucial for instance segmentation with RGB data \cite{Tabak2023}\cite{Martinez2019}. This could explain why the RGB-only networks performed so well on the Optonic Bin-Picking Dataset. The quality of the different RGB images can be inspected in figure \ref{img:rgb-image-comparison}.\\
+		This study states that the data quality of depth and RGB data have a massive influence on the performance of instance segmentation. Depth images could need much sharpness, while RGB images probably need a higher resolution to perform more precisely.\\
+		If that is true, improved (sharpened) depth data could lead together with high-quality RGB images to even better sim-to-real performance.\\
+		Also, settings like the exposure could influence the RGB networks in the sim-to-real experiment. In figure \ref{img:rgb-image-comparison}, the RGB images from the OCID dataset have less smooth exposure with much more shadows, which also could explain the result. It remains questionable which factor on the RGB image is influencing the instance segmentation performance in which way.\\
+		The experiments led to the rejection of the hypothesis that additional depth information leads to more generalization and a better sim-to-real performance. The hypothesis may still be true, but it needs more conditions, like a high-depth quality; this study can not answer this question with certainty. 
 	
-	
+		\FloatBarrier
+		\begin{figure}[h]
+			\centering
+			\includegraphics[width=\textwidth]{kapitel5/depth-image-comparison.png}
+			\caption[Example depth images from 3xm Test Dataset, OCID dataset and from Optonic Bin-Picking Dataset.]{Example depth images from 3xm Test Dataset, OCID dataset and from Optonic Bin-Picking Dataset.}
+			\label{img:depth-image-comparison}
+		\end{figure}
+		
+		\begin{figure}[h]
+			\centering
+			\includegraphics[width=\textwidth]{kapitel5/rgb-image-comparison.png}
+			\caption[Example RGB images from 3xm Test Dataset, OCID dataset and from Optonic Bin-Picking Dataset.]{Example RGB images from 3xm Test Dataset, OCID dataset and from Optonic Bin-Picking Dataset.}
+			\label{img:rgb-image-comparison}
+		\end{figure}
+		\FloatBarrier
+		
+		The hypothesis that more distinction in shapes leads to a higher bias toward shapes is rejected by the Shape vs. Texture Attention Test, where, in many cases, more unique shapes led to a lower shape bias.\\
+		The influence of the shape amount varies in the experiments. It seems like the shape amount increases the generalization ability of shapes and improves the mean \ac{iou} in that way. The in-distribution experiment shows that the shape amount increases the mean \ac{iou} in cases where the shape is unknown. The sim-to-real experiment is more mixed, but it could have a positive influence on the mean \ac{iou} when the shapes are unknown. Maybe the shapes from the OCID dataset are known because they are common objects with often simple shapes, while the objects in the Optonic Bin-Picking Dataset are more complex and special. Thus, they are novel for the networks, and so the shape amount has a higher influence on the accuracy.\\
+		The hypothesis can be confirmed partwise.\\
+		The claim that the texture bias increases when the amount of textures rises is not confirmed by the experiment but also not the opposite, as in the case of shape bias.\\
+		The amount of textures can influence instance segmentation performance, in-distribution data, and real-world data. The in-distribution data experiment shows that the texture amount most likely has a positive influence when unknown textures are in the data. This could mean that the generalization of texture is connected with the number of unique textures. This could also explain why the amount of texture increased the mean \ac{iou} in the OCID Dataset but not in the Optonic Bin-Picking Dataset. The OCID dataset may have novel textures for the networks, and the Optonic Dataset has similar textures, so the texture amount did not have much influence.\\
+		This part of the hypothesis is confirmed partwise by this study.
+		
+		
 	% \section{Hypotheses Confirmation}
 	% \label{sec:hypotheses-conformation}
 	
 	
 	
-	\section{Discussion} % Limitations and Challenges, possible explanaitions
-	\label{sec:discussion}
+	%\section{Discussion} % Limitations and Challenges, possible explanaitions
+	%\label{sec:discussion}
 	
 	% Hypotheses Confirmation
 	
@@ -47,6 +281,14 @@
 	
 	\section{Limiations} % Limitations and Challenges, possible explanaitions
 	\label{sec:limitations}
+		An important consideration in the Shape vs. Texture Attention Test is the representation and interpretation of model confusion. The extent to which decisions were "confused" is not well-represented, as the evaluation was conducted based on subjective and coarse criteria, introducing a degree of subjectivity into the analysis. Furthermore, it is challenging to definitively assess the validity of the statements regarding classification of the decisions towards shape or texture biased.\\
+		The interplay between specific shapes and textures also played a significant role. Certain shape-texture combinations appeared more confusing than others, yet they exerted a similar influence on the evaluation. Additionally, the varying number of objects within the images introduced another layer of distortion to the results. \\
+		Despite these limitations, this experiment provides valuable insights into tendencies and how the model handles such data.\\
+		\\
+		The sim-to-real experiment had surprising foundings, which can be explained but not with certainty. It would need further investigation to clear the open questions for this experiment and the interesting results from it.
+	
+	
+	
 	
 	\iffalse
 	Diskussion - Bias Experiment: In the bias experiment it is difficult to say if a prediction is biased towards texture or shape. All confusing data is only confusing on texture level, so a texture biased model should perform poorly in comparison to a shape biased model. But also a shape biased model will use texture information and the question is how much and how the impact really is. In addition there are other influences, like amount of objects per scene, brightness, reflective texture, novel texture, novel shape and all of these can influence the result. -> my opinion? what does the results look like?
