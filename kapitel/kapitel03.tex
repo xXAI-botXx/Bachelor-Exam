@@ -3,8 +3,8 @@
 	% To find answers about the previous stated hypotheses in section \ref{sec:hypothesis-statement}, an experimental research design was chosen. An experimental research design suits well to this kind of hypothesis, and other designs would not fit such practical questions. 
 	This study proposes a new synthetic dataset for instance segmentation, focusing on bin-picking as domain. The dataset uses the Unreal Engine 5.4.4 \cite{ue5} with hyper-realistic textures and shapes to create the data for the experiments as described in section \ref{sec:data}.\\
 	To apply instance segmentation the widely used Mask R-CNN \cite{Kaiming2017} from PyTorch \cite{pytorch} is used \ref{sec:ai-model}.\\
-	The coding for data preparation, \ac{dnn} training, and inference was done in Visual Studio Code \cite{vscode}, a flexible and feature-rich \ac{ide}. The data generation was programmed in the blueprint system from Unreal Engine 5 \cite{ue5} in the form of visual programming \cite{Romero2022}.\\
-	For managing the Python environments, anaconda \cite{anaconda} got used and greatly impacted the workflow.\\
+	The coding for data preparation, \ac{dnn} training, and inference was done in Visual Studio Code \cite{vscode}. The data generation was programmed in the blueprint system from Unreal Engine 5 \cite{ue5} in the form of visual programming \cite{Romero2022}.\\
+	To manage Python environments, Anaconda \cite{anaconda} was utilized, significantly streamlining the workflow.\\
 	The training and inference of all \ac{dnn}s and experiments have been done on three separate remote computers. One Linux-based computer with SSH and X11vnc remote connection from Optonic \cite{optonic} with an NVIDIA RTX 4090 as \ac{gpu}. And two Windows-based computers from Shadow-Tech \cite{shadow}, both with an NVIDIA RTX A4500.\\
 	Furthermore this study proposes four in-distribution datasets and one real-world dataset for testing performance and sim-to-real ability, as described in more detail in section \ref{sec:test-data}.
 
@@ -17,7 +17,7 @@
 	\label{sec:ai-model}
 		Starting with a summary about the used \ac{dnn}, Mask R-CNN \cite{Kaiming2017}. Notice that every implementation of Mask R-CNN can vary in a few points, but the core functionality remains the same.
 		Mask R-CNN is the name of a \ac{dnn}, which is historical for instance segmentation. It builds up from Faster R-CNN \cite{Ren2016}, uses the ability to detect objects, and adds the creation of masks for every object. It is a widely adopted architecture and shines with its flexible nature and precise masks.\\
-		To understand the fundamentals of this \ac{dnn}, it follows brief explanations about the underlying functionality of the Mask R-CNN followed by a summary to understand the whole process.\\
+		To understand the fundamentals of this \ac{dnn}, a brief explanations about the underlying functionality of the Mask R-CNN is provided, followed by a summary to understand the whole process.\\
 		\textbf{Residual Networks} (short ResNet) are the first part of Mask R-CNN's architecture. The network is a special type of \ac{cnn}s. \ac{cnn} are key architectures in modern computer vision. They detect spatial features and consist of convolution layers, which convolute images using filters or kernels to detect features like edges, texture, or other patterns, and of pooling layers, which reduce the size of the features by taking only the maximal value from every area and uses activation functions to be able to map non-linear functions \cite{Oshea2015}. The ResNet takes on the feature extraction and is most likely pre-trained. It uses skip connections to ensure the ability to generalize well in deeper layers. Output is a dense version of the origin image, which contains the features from it, called feature-map \cite{He2015}. Thus, the ResNet is the so-called backbone of the Mask R-CNN.\\
 		Next, these feature maps get extended through a \textbf{\acl{fpn}} (short \ac{fpn}). The \ac{fpn} is used to get the feature maps on different scales to extract features from larger and smaller objects. The output from multiple ResNet layers is used with \ac{cnn}s to calculate new feature maps. In addition, it creates (also with \ac{cnn}s) a hierarchical structure (like a pyramid) with features in different resolutions and semantic \cite{Lin2017}. The \ac{fpn} also belongs to the backbone of the Mask R-CNN, since it also extracts features.\\
 		After extracting the feature maps on different scales, a \textbf{\acl{rpn}} (short \ac{rpn}) uses these feature maps to build proposals that could contain objects called \ac{roi}s. First, the \ac{rpn} creates many anchor boxes for every X pixel. Then, a neural network classifies probabilities for every anchor box and only keeps the ones with high probability. Next up, a regression model refines the remaining anchor boxes. At last, the \ac{roi}s get filtered through \ac{nms}, which first filters the boxes with their scores, then removes boxes with too high \ac{iou}. This step is important because one object can have multiple anchor boxes, which is not wanted \cite{Ren2016}.\\
@@ -45,15 +45,17 @@
 			\label{img:maskrcnn}
 		\end{figure}
 		
-		This work uses the torchvision implementation from PyTorch \cite{Torchvision}. It is a stable, professional implementation and works with modern graphic cards.\\
-		Previously, the famous tensorflow implementation from Matterport \cite{Matterport} was used, but the implementation changed due to issues with newer graphic cards. Section \ref{sec:challenges} covers more of the challenges and learnings.
+		The visualization and commentary of the in-between inference steps in appendix \ref{appendix:inference-insights} can possibly make it even more understandable.\\
+		\\
+		This work uses the torchvision implementation from PyTorch \cite{Torchvision}.\\
+		Section \ref{sec:challenges} covers the challenges and learnings while utilizing Mask R-CNN for the experiment of this study.
 		
 		\clearpage
 		There was still much coding to make the \ac{dnn} work as intended. The Python file can be controlled by parameters and is well structured.\\
 		One important part is the data loader, which first verifies the data, meaning it checks if there is a solution mask for every image and a depth image (if using depth). Finally, it finds the pixel value used for the background.\\
-		During the training process, it loads the RGB image, the solution mask, and the depth image optionally. It also extracts a list of objects and bounding boxes from the solution mask. Data augmentations are significant for the robustness of the \ac{dnn}. These are random transformations and manipulation steps, including flipping, cropping, rotating, blurring, and adding noise to the image. A special data augmentation was applied to add more variation to the background since the background has only two different colors. The background augmentation is listed in \ref{lst:bg-augmentation} since it is not a custom data augmentation. The background augmentation can add noise, a checkerboard pattern, a color gradient, or a color shift. The chosen effect will only be applied to the background using the segmentation masks. \\
-		Lastly, the data loader must prepare the input data for the right form for training, resizing, and transforming it into a tensor from PyTorch.
-		
+		During the training process, it loads the RGB image, the solution mask, and the depth image optionally. It also extracts a list of objects and bounding boxes from the solution mask. Data augmentations are significant for the robustness of the \ac{dnn}. These are random transformations and manipulation steps, including flipping, cropping, rotating, blurring, and adding noise to the image. A special data augmentation was applied to add more variation to the background since the background has only two different colors. The background augmentation can add noise, a checkerboard pattern, a color gradient, or a color shift. The randomly chosen effect will only be applied to the background using the segmentation masks. \\ %The background augmentation is listed in \ref{lst:bg-augmentation} since it is not a custom data augmentation. 
+		Lastly, the data loader must prepare the input data for the right form for training, resizing, and transforming it into a tensor from PyTorch.\\
+		\iffalse
 		\begin{lstlisting}[language=Python,caption=Random Augmentation of the Background using cv2 in Python, label=lst:bg-augmentation]
 class Random_Background_Modification:
 		...
@@ -158,11 +160,11 @@ class Random_Background_Modification:
 																										mask_img])
 				return result, depth_img, mask_img
 		\end{lstlisting}
-		
-		\clearpage
-		The training function needed experiment tracking, logging, printouts, learn rate scheduling, optimization, model loading, and more. For experiment tracking, mlflow and tensorboard were implemented. Both are helpful tools for tracking training and optimizing the training process. For learn rate scheduling, a simple custom scheduler was chosen with warm-up steps to first make small steps in the correct direction and then be able to increase the learning rate. Choosing a high learning rate at the beginning would lead to swinging up weight over-adjustments. \\
-		The model loading and creation process was done without effort through the simple and well-functioning PyTorch implementation. The first layer gets optionally adjusted to add a depth channel to the input image. There is also an adjustment at the loss weights to weigh the segmentation more. The \acl{nms} got adjusted due to the clutter environments in bin picking. Listing \ref{lst:model-loading} shows the loading and adjustment. Notice how simple it is to adjust the architecture. The \ac{dnn} loading function also prints out every layer and a summary of the layers, which is a fascinating insight into the architecture.
-		
+		\fi
+		The training function needed experiment tracking, logging, printouts, learn rate scheduling, optimization, model loading, and more. For experiment tracking, mlflow and tensorboard were implemented. Both are helpful tools for tracking training and optimizing the training process. For learn rate scheduling, a simple custom scheduler was chosen with warm-up steps to first make small steps in the correct direction and then be able to increase the learning rate. Choosing a high learning rate at the beginning could lead to swinging up weight over-adjustments. \\
+		%The model loading and creation process was done without effort through the simple and well-functioning PyTorch implementation.
+		The first layer gets optionally adjusted to add a depth channel to the input image. There is also an adjustment at the loss weights to weigh the segmentation more. The \acl{nms} got adjusted due to the clutter environments in bin picking.\\ %Listing \ref{lst:model-loading} shows the loading and adjustment. Notice how simple it is to adjust the architecture. The \ac{dnn} loading function also prints out every layer and a summary of the layers, which is a fascinating insight into the architecture.\\
+		\iffalse
 		\begin{lstlisting}[language=Python,caption=Loading function of Mask R-CNN using torchvision, label=lst:model-loading]
 def load_maskrcnn(
 				weights_path=None, 
@@ -240,10 +242,10 @@ def load_maskrcnn(
 		
 		return model
 		\end{lstlisting}
-		
+		\fi
 		\ac{sgd} with Nesterov-Momentum \cite{Botev2016} was used as learn rate optimizer. \ac{sgd} is known for its good generalization and preciseness but also for its slowness. The Nesterov-Momentum was used to increase convergence speed and stabilize the process.\\
 		The train loop itself is a typical PyTorch train loop. \\
-		Lastly, the inference is essential to use the \ac{dnn}. The same data loader can be used for the inference due to its flexibility. The inference can process multiple images and create optional visualizations from the created mask and the ground truth (if existing). Exceptional is the feature of visualizing in-between inference steps, as the feature maps from the \ac{fpn} or the \ac{roi} align. For that, hooks were implemented, which call a function when the layer runs. The hook function saves the output of the layer in a dictionary. For the visualization, it was tricky to handle all the different sizes. It is clear to see every described step of the network and makes it sufficiently coherent; thus, listing \ref{lst:inference-insight} shows the described code for the hooking and the visualization, and appendix \ref{appendix:inference-insights} shows samples from one example inference with the network insights.\\
+		Lastly, the inference is essential to use the \ac{dnn}. The same data loader can be used for the inference due to its flexibility. The inference can process multiple images and create optional visualizations from the created mask and the ground truth (if existing). \\
 		Additionally, given the ground truth, many different metrics can be calculated during the inference. The inference result is saved as a gray image or a numpy array. The whole process has a print-out for information about the progress.\\
 		The coding for the training and inference includes about 66 defined functions, 14 defined classes, one global keyword, 33 imports, 794 called functions and classes, 50 for-loops, 223 if statements, 194 bool operations, and 182 arithmetic operations.
 	
@@ -259,34 +261,31 @@ def load_maskrcnn(
 		\\
 		It follows a more in-depth description of visual code for data generation. Only the most important parts can be covered. The code is too massive to show everything in this work here.\\
 		The data generator has 24 parameters for customization, as listed in appendix \ref{appendix:custom-params-ue5}.\\
-		The initialization nodes only run once after starting the data generation process. First, it checks if the previously listed user parameters are correct. Verification is beneficial to detect early problems and mistakes. Then, every variable receives a reset to ensure everything is ready for the data generation. Figure \ref{img:ue5_init} shows this initial code.
-		
-		\begin{figure}[h]
-			\centering
-			\includegraphics[width=\textwidth]{kapitel3/init.jpeg}
-			\caption[Visual Code for Initialization in Unreal Engine 5 by Tobia Ippolito]{Visual Code for Initialization in Unreal Engine 5}
-			\label{img:ue5_init}
-		\end{figure}
-		
+		The initialization nodes only run once after starting the data generation process. First, it checks if the previously listed user parameters are correct. Verification is beneficial to detect early problems and mistakes. Then, every variable receives a reset to ensure everything is ready for the data generation. %Figure \ref{img:ue5_init} shows this initial code.\\
+		%\begin{figure}[h]
+		%	\centering
+		%	\includegraphics[width=\textwidth]{kapitel3/init.jpeg}
+		%	\caption[Visual Code for Initialization in Unreal Engine 5 by Tobia Ippolito]{Visual Code for Initialization in Unreal Engine 5}
+		%	\label{img:ue5_init}
+		%\end{figure}
 		According to the initialization, the main loop is called every frame. Many variables and branches are used to determine which steps are already made and which should be done next.\\
-		The main loops start with changing the background material and the material of the bin box. After that, the lights get adjusted, which consist of 3 rectangular light boxes. Next, three renderers are created and adjusted to the camera: one for RGB capture, one for depth capture, and one for segmentation mask capture. The next step is noteworthy; here, a random amount of objects with random materials and shapes are scaled, created, and spawned by the bin box. If an object falls out of the box, it automatically gets respawned in the box. A RGB image is taken if all objects stop moving or a given time limit is surpassed. It continues with taking a depth image. Before the segmentation mask image can be made, every object gets a new material with a unique plain color, and the background and bin box are assigned to a black material. The segmentation image can now be taken, and the scene is over. Figure \ref{img:ue5_main} shows a small part of the main loop.
-		
-		\begin{figure}[h]
-			\centering
-			\includegraphics[width=\textwidth]{kapitel3/main.jpeg}
-			\caption[Visual Code for creating a scene and taking an RGB, depth, and mask image in Unreal Engine 5 by Tobia Ippolito]{Visual Code for creating a scene and taking an RGB, depth, and mask image in Unreal Engine 5}
-			\label{img:ue5_main}
-		\end{figure}
-		
-		After creating a scene, every important variable is set to the default value, and the image counter is increased. Then, the program checks whether to change the dataset (changing the material/and shape amount) and reset the image counter or continue with the current dataset. This behavior is presented in figure \ref{img:ue5_dataset_loop}.\\
-		When switching to another dataset, there is always a selection of materials and shapes for the whole dataset. The selection can be random or ordered, depending on the chosen parameters. The selection process is viewed in figure \ref{img:ue5_material_shape_choice}.
-		
-		\begin{figure}[h]
-			\centering
-			\includegraphics[width=\textwidth]{kapitel3/dataset_loop.jpeg}
-			\caption[Visual Code for changing the dataset and prepare the next scene in Unreal Engine 5 by Tobia Ippolito]{Visual Code for changing the dataset and prepare the next scene in Unreal Engine 5}
-			\label{img:ue5_dataset_loop}
-		\end{figure}
+		The main loops start with changing the background material and the material of the bin box. After that, the lights get adjusted, which consist of 3 rectangular light boxes. Next, three renderers are created and adjusted to the camera: one for RGB capture, one for depth capture, and one for segmentation mask capture. The next step is noteworthy; here, a random amount of objects with random materials and shapes are scaled, created, and spawned by the bin box. If an object falls out of the box, it automatically gets respawned in the box. \\
+		A RGB image is taken if all objects stop moving or a given time limit is surpassed. It continues with taking a depth image. Before the segmentation mask image can be made, every object gets a new material with a unique plain color, and the background and bin box are assigned to a black material. The segmentation image can now be taken, and the scene is over.\\ %Figure \ref{img:ue5_main} shows a small part of the main loop.
+		%\begin{figure}[h]
+		%	\centering
+		%	\includegraphics[width=\textwidth]{kapitel3/main.jpeg}
+		%	\caption[Visual Code for creating a scene and taking an RGB, depth, and mask image in Unreal Engine 5 by Tobia Ippolito]{Visual Code for creating a scene and taking an RGB, depth, and mask image in Unreal Engine 5}
+		%	\label{img:ue5_main}
+		%\end{figure}
+		After creating a scene, every important variable is set to the default value, and the image counter is increased. Then, the program checks whether to change the dataset (changing the material/and shape amount) and reset the image counter or continue with the current dataset. \\%This behavior is presented in figure \ref{img:ue5_dataset_loop}.\\
+		When switching to another dataset, there is always a selection of materials and shapes for the whole dataset. The selection can be random or ordered, depending on the chosen parameters. \\%The selection process is viewed in figure \ref{img:ue5_material_shape_choice}.
+		%\begin{figure}[h]
+		%	\centering
+		%	\includegraphics[width=\textwidth]{kapitel3/dataset_loop.jpeg}
+		%	\caption[Visual Code for changing the dataset and prepare the next scene in Unreal Engine 5 by Tobia Ippolito]{Visual Code for changing the dataset and prepare the next scene in Unreal Engine 5}
+		%	\label{img:ue5_dataset_loop}
+		%\end{figure}
+		For an insight into what visual code looks like figure \ref{img:ue5_material_shape_choice} is referred.
 		
 		\begin{figure}[h]
 			\centering
@@ -299,7 +298,7 @@ def load_maskrcnn(
 		\\
 		The nine in this work proposed datasets called \textbf{3xM} ("triple m") for \textbf{m}odel-\textbf{m}aterial-\textbf{m}ixture which refers to the combinations of different unique amounts of shapes and textures.
 		
-
+	\clearpage
 	\section{Test Data}
 	\label{sec:test-data}
 		Four in-distribution test datasets with 100 RGB, depth, and mask images were created with the methodology from section \ref{sec:data}.
@@ -314,7 +313,9 @@ def load_maskrcnn(
 		\end{figure}
 		\FloatBarrier
 		The setup was a simple black bin with a mat (foam-like) inside and the camera attached to a table, as shown in figure \ref{img:real-data-setup}.
-		Twenty-two unique objects were used in an organized way to produce the data scenes: twelve industrial parts and ten everyday consumer goods. In total, 62 objects were used. The scenes are organized in cluttered/uncluttered, solo/mixed (only one type of unique object or different unique object types), and industrial/product/industrial \& product.
+		Twenty-two unique objects were used in an organized way to produce the data scenes: twelve industrial parts and ten everyday consumer goods. In total, 62 objects were used. The scenes are organized in cluttered/uncluttered, solo/mixed (only one type of unique object or different unique object types), and industrial/product/industrial \& product.\\
+		\\
+		The appendix \ref{appendix:inference-examples} shows three example inferences on this bin-picking dataset.
 		\clearpage
 		The objects contain:
 		\begin{itemize}
@@ -345,115 +346,11 @@ def load_maskrcnn(
 			\label{img:real-data-objects}
 		\end{figure}
 		
-		The connection to the camera happened through the network with the NxView Software from Optonic GmbH. Then, every scene was saved in ZIP file format and later loaded as a file camera in NxView, which behaves similarly to a real camera and was used by the Python script in listing \ref{lst:file-camera}. The listing \ref{lst:file-camera} also shows the used scaling for depth information. The depth scaling starts with decreasing all positive values greater than zero to zero since zero should be the ground of the bin (the camera was calibrated before). Next, the depth data is converted from negative to positive space and missing values are replaced with linear interpolation. If there are values greater than 255, a min-max normalization is applied. A stretching method uses the lowest and highest values to cover the whole range of values. Then, the depth data can be converted to integer values with 8-bit depth, which can be saved and used.
-		
-		\begin{lstlisting}[language=Python,caption=Capturing images from a file camera with depth image scaling, label=lst:file-camera]
-import os
-import json
-import zipfile
-
-import numpy as np
-import cv2
-from scipy.interpolate import griddata
-
-from nxlib import NxLib, Camera, NxLibItem
-from nxlib.context import NxLib, StereoCamera
-from nxlib.command import NxLibCommand
-from nxlib.constants import *
-
-with open("./params.json", "r") as file:
-		params = json.loads(file.read())
-
-os.makedirs("./data", exist_ok=True)
-os.makedirs("./data/rgb", exist_ok=True)
-os.makedirs("./data/depth", exist_ok=True)
-
-def interpolate_nan(image):
-		x, y = np.indices(image.shape)
-		nan_mask = np.isnan(image)
-		
-		# Coordinates of valid (non-NaN) points
-		valid_coords = np.array((x[~nan_mask], y[~nan_mask])).T
-		# Values of valid points
-		valid_values = image[~nan_mask]
-		# Coordinates of NaN points
-		nan_coords = np.array((x[nan_mask], y[nan_mask])).T
-		
-		# Interpolate NaN points
-		interpolated_values = griddata(valid_coords, valid_values, nan_coords, method='linear')
-		
-		# Fill the interpolated values back into the image
-		result = image.copy()
-		result[nan_mask] = interpolated_values
-		
-		return result
-
-serial_number = "all_scenes_1"
-
-with NxLib(), StereoCamera(serial_number) as camera:
-		camera.get_node()[ITM_PARAMETERS].set_json(json.dumps(params[ITM_PARAMETERS]), True)
-		
-		first_image = None
-		counter = 0
-		while True:
-				camera.capture()
-				camera.rectify()
-				camera.compute_disparity_map()
-				camera.compute_point_map()
-				
-				# get unique name
-				name = "optonic_bin-picking_dataset_00.png"
-				name_counter = 1
-				while name in os.listdir("./data/rgb"):
-						name = f"optonic_bin-picking_dataset_{name_counter:02}.png"
-						name_counter += 1
-				
-				# calc depth map
-				points = camera.get_point_map()
-				depth_data = points[:,:,2]
-				depth_data = np.minimum(depth_data, 0)
-				depth_data = depth_data + abs(np.nanmin(depth_data))
-				depth_data = interpolate_nan(depth_data)
-				depth_data = depth_data.astype(np.int16)
-				
-				
-				if np.nanmax(depth_data) <= 255:
-						depth_data = depth_data.astype(np.uint8)
-				else:
-						depth_data = ((depth_data - np.nanmax(depth_data)) / 
-														(np.nanmax(depth_data) - np.nanmin(depth_data))
-														).astype(np.uint8)
-						depth_data = (depth_data * 255).astype(np.uint8)
-				
-				min_val = np.min(depth_data)
-				max_val = np.max(depth_data)
-				
-				# Apply linear scaling to stretch the pixel values
-				depth_data = ((depth_data - min_val) / (max_val - min_val)) * 255
-				depth_data = np.uint8(depth_data)
-				
-				# get rgb
-				image = camera.get_texture()
-				image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-				
-				if first_image is None:
-						first_image = image
-				elif np.array_equal(first_image, image):
-						break
-				
-				# save images
-				cv2.imwrite(f"./data/depth/{name}", depth_data)
-				cv2.imwrite(f"./data/rgb/{name}", image)
-				print(f"Successfull extracted image {counter+1}")
-				counter += 1
-		\end{lstlisting}
-		
-		The author hand-labeled every image using a semi-automatic annotation approach with CVAT \cite{cvat}. All images were pre-labeled with the SAM model \cite{Kirillov2023} and manually corrected and adjusted. The annotation software runs entirely on the web and does not require any installments. This procedure enabled a quick annotation process without any troubles.
-	
-		
+		The connection to the camera happened through the network with the NxView Software from Optonic GmbH. Then, every scene was saved in ZIP file format and later loaded as a file camera in NxView, which behaves similarly to a real camera and was used by the Python script in listing \ref{lst:file-camera}. The listing \ref{lst:file-camera} also shows the used scaling for depth information. The depth scaling starts with decreasing all positive values greater than zero to zero since zero should be the ground of the bin (the camera was calibrated before). Next, the depth data is converted from negative to positive space and missing values are replaced with linear interpolation. If there are values greater than 255, a min-max normalization is applied. A stretching method uses the lowest and highest values to cover the whole range of values. Then, the depth data can be converted to integer values with 8-bit depth, which can be saved and used.\\
+		Every image is hand-labeled using a semi-automatic annotation approach with CVAT \cite{cvat}. The objects were pre-labeled with the SAM model \cite{Kirillov2023} and manually corrected and adjusted. The annotation software runs entirely on the web and requires no installments. This procedure enabled a quick annotation process without any troubles.
 		\begin{figure}[h]
 			\centering
-			\includegraphics[width=\textwidth]{kapitel3/real_data_setup.jpg}
+			\includegraphics[width=0.7\textwidth]{kapitel3/real_data_setup.jpg}
 			\caption[Setup for collecting real-world bin-picking data.]{Setup for collecting real-world bin-picking data.}
 			\label{img:real-data-setup}
 		\end{figure}

@@ -1,0 +1,18 @@
+\chapter{Used Hyperparameters in Training}
+\label{appendix:hyperparameter}
+	Every model in this study used following hyperparameters.
+
+	\begin{itemize}
+		\item \textbf{\ac{dnn}:} Mask R-CNN from torchvision
+		\item \textbf{Epochs:} 40
+		\item \textbf{Data amount:} 20000
+		\item \textbf{Width and height:} 1920 x 1080
+		\item \textbf{Warm-up iterations:} 2000
+		\item \textbf{Learning rate:} 0.003
+		\item \textbf{Scheduler:} Simple custom scheduler with warm-up and down-regulation
+		\item \textbf{Optimizer:} \acl{sgd} with Nesterov momentum \cite{Botev2016}
+		\item \textbf{Momentum:} 0.9
+		\item \textbf{Batch size:} 5
+		\item \textbf{Shuffle data:} True
+		\item \textbf{Data Augmentations:} Random flip, rotation, crop, brightness contrast, noise, blur, scale and background modification
+	\end{itemize}

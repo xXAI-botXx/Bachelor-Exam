@@ -191,9 +191,9 @@
 	
 	\FloatBarrier
 	
-	Hint: The bounding box refinement and object classification are also included at the end, but this insight wanted to focus on mask creation.
+	%Hint: The bounding box refinement and object classification are also included at the end, but this insight wanted to focus on mask creation.
 	
-	
+	\iffalse
 	Following code collect and visualize these fascinating insights.
 
 	\begin{lstlisting}[language=Python,caption=Hooking insight informations from Mask R-CNN, label=lst:inference-insight]
@@ -402,6 +402,7 @@ def visualize_insights(insights, should_save, save_path, name, should_show, max_
 						print(f"Error during insight visualization of: {layer_name} with error: {e} and tensor: {data['output'].size()}")
 				counter += 1
 	\end{lstlisting}
+	\fi
 	
 
 

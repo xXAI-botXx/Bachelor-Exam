@@ -1,7 +1,7 @@
 \chapter{Optonic Bin-Picking Dataset Examples}
 \label{appendix:testdata-examples-simtoreal}
 
-	This study proposes a real-world dataset for instance-segmentation as described in section \ref{sec:test-data}. Here are samples from this dataset with RGB, depth and (colored) mask.
+	This study proposes a real-world dataset for instance-segmentation as described in section \ref{sec:test-data}. Here are samples from this dataset with RGB, depth and (colored) mask. In addition, this appendix shows the python code for capturing the images in listing \ref{lst:file-camera}.
 	
 	\begin{figure}[H]
 		\centering
@@ -78,5 +78,108 @@
 		\includegraphics[width=\textwidth]{anhang/real/real_data_sample_15.png}
 		\caption[An sample observation from the sim-to-real test dataset.]{An sample observation from the sim-to-real test dataset}
 	\end{figure}
+	
+	\clearpage
+	\begin{lstlisting}[language=Python,caption=Capturing images from a file camera with depth image scaling using Ensenso Software from Optonic GmbH \cite{optonic}, label=lst:file-camera]
+import os
+import json
+import zipfile
+
+import numpy as np
+import cv2
+from scipy.interpolate import griddata
+
+from nxlib import NxLib, Camera, NxLibItem
+from nxlib.context import NxLib, StereoCamera
+from nxlib.command import NxLibCommand
+from nxlib.constants import *
+
+with open("./params.json", "r") as file:
+		params = json.loads(file.read())
+
+os.makedirs("./data", exist_ok=True)
+os.makedirs("./data/rgb", exist_ok=True)
+os.makedirs("./data/depth", exist_ok=True)
+
+def interpolate_nan(image):
+		x, y = np.indices(image.shape)
+		nan_mask = np.isnan(image)
+		
+		# Coordinates of valid (non-NaN) points
+		valid_coords = np.array((x[~nan_mask], y[~nan_mask])).T
+		# Values of valid points
+		valid_values = image[~nan_mask]
+		# Coordinates of NaN points
+		nan_coords = np.array((x[nan_mask], y[nan_mask])).T
+		
+		# Interpolate NaN points
+		interpolated_values = griddata(valid_coords, valid_values,
+																				nan_coords, method='linear')
+		
+		# Fill the interpolated values back into the image
+		result = image.copy()
+		result[nan_mask] = interpolated_values
+		
+		return result
+
+serial_number = "all_scenes_1"
+
+with NxLib(), StereoCamera(serial_number) as camera:
+		camera.get_node()[ITM_PARAMETERS].set_json(
+																					json.dumps(params[ITM_PARAMETERS]), 
+																					True
+																				)
+		
+		first_image = None
+		while True:
+				camera.capture()
+				camera.rectify()
+				camera.compute_disparity_map()
+				camera.compute_point_map()
+				
+				# get unique name
+				name = "optonic_bin-picking_dataset_00.png"
+				name_counter = 1
+				while name in os.listdir("./data/rgb"):
+						name = f"optonic_bin-picking_dataset_{name_counter:02}.png"
+						name_counter += 1
+				
+				# calc depth map
+				points = camera.get_point_map()
+				depth_data = points[:,:,2]
+				depth_data = np.minimum(depth_data, 0)
+				depth_data = depth_data + abs(np.nanmin(depth_data))
+				depth_data = interpolate_nan(depth_data)
+				depth_data = depth_data.astype(np.int16)
+				
+				
+				if np.nanmax(depth_data) <= 255:
+						depth_data = depth_data.astype(np.uint8)
+				else:
+						depth_data = ((depth_data - np.nanmax(depth_data)) / 
+														(np.nanmax(depth_data) - np.nanmin(depth_data))
+														).astype(np.uint8)
+				depth_data = (depth_data * 255).astype(np.uint8)
+				
+				min_val = np.min(depth_data)
+				max_val = np.max(depth_data)
+				
+				# Apply linear scaling to stretch the pixel values
+				depth_data = ((depth_data - min_val) / (max_val - min_val)) * 255
+				depth_data = np.uint8(depth_data)
+				
+				# get rgb
+				image = camera.get_texture()
+				image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+				
+				if first_image is None:
+						first_image = image
+				elif np.array_equal(first_image, image):
+						break
+				
+				# save images
+				cv2.imwrite(f"./data/depth/{name}", depth_data)
+				cv2.imwrite(f"./data/rgb/{name}", image)
+	\end{lstlisting}
 
 	

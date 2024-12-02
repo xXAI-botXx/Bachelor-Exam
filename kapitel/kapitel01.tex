@@ -8,7 +8,7 @@
 
 
 
-	\section{Objective and Significance}    % Importance, Value?
+	\section{Objective}    % Importance, Value?
 	\label{sec:objective-and-importance}	
 		Since introducing instance segmentation in the years 2012-2014 \cite{Yang2012}\cite{Silbermann2012}\cite{Hariharan2014}, it has become one of the most important and complex tasks in computer vision \cite{Sharma2022}. \\
 		Detecting and separating every foreground object in an image with pixel-wise accuracy can be found in many modern responsibilities. It ranges from grading prostate cancer \cite{Hassan2022}, to understanding cell division, cellular growth, and morphogenesis \cite{Kar2022}, to wildlife monitoring \cite{Haucke2021}, to segmenting unknown marine objects \cite{Hu2024}, to tooth segmentation in dental medicine \cite{Brahmi2023} and much more. The rising use cases also create a need for more precise segmentations. It can be challenging to achieve this goal because many factors, like the domain, data quality, quantity, \ac{dnn} architecture, and data augmentations, can be adjusted.\\
@@ -26,15 +26,14 @@
 	\label{sec:core-focus-of-the-study}
 		Generalization, shape-texture bias, and sim-to-real transfer are all fundamental and complex areas with many research possibilities. This study will focus on depth data and the quantity of shapes and textures concerning these three areas. The main objective of this study is a practical approach to uncovering new and valuable insights.\\
 		Understanding the impact of depth data on shape-texture bias, generalization, and sim-to-real performance of a \ac{dnn} is essential. Collecting depth data in real-world scenarios can be challenging, so knowing how much depth data enhances segmentation outcomes can be highly beneficial.\\
-		Additionally, new information about the influence of shape-texture quantity could be relevant and valuable. Generating different shapes and textures with high quality and quantity, potentially in a domain-specific manner, is demanding and time-intensive. Determining the minimum necessary variety of shapes and textures for robust generalization can support the efficiency of \ac{dnn} development for instance-segmentation.\\
-		\\
-		A novel examination is the combination of depth data and shape-texture quantity on generalization, shape-texture bias, and sim-to-real transfer, which could yield exciting insights.
+		Additionally, new information about the influence of shape-texture quantity could be relevant and valuable. Generating different shapes and textures with high quality and quantity, potentially in a domain-specific manner, is demanding and time-intensive. Determining the minimum necessary variety of shapes and textures for robust generalization can support the efficiency of \ac{dnn} development for instance-segmentation.
+		%A novel examination is the combination of depth data and shape-texture quantity on generalization, shape-texture bias, and sim-to-real transfer, which could yield exciting insights.
 		
 	
-	
+	\clearpage
 	\section{Methodology Overview}
 	\label{sec:methodology-overview}
-		This work presents 18 Mask R-CNN \cite{Kaiming2017} models. Nine models were trained on RGB-only data, and nine were trained on RGB depth data.\\
+		This study presents 18 Mask R-CNN \cite{Kaiming2017} models. Nine models were trained on RGB-only data, and nine were trained on RGB depth data.\\
 		Each model is trained on another (here proposed) synthetic dataset. The datasets were created in Unreal Engine 5 \cite{Romero2022} and consist of 20.000 RGB, depth, and mask-images. The shapes and textures used vary between the datasets.\\ 
 		With these 18 \ac{dnn}s, three different studies were performed for generalization, shape-texture bias, and sim-to-real transfer. A few sets of data that have special and puzzling textures show if the \ac{dnn} learned to prefer shape or texture. This data includes images where the objects have multiple textures and images where the objects all have the same texture. An in-distribution test dataset with a structured combination of novel and known shapes and textures is proposed to test the performance and generalization of shape and texture.\\
 		Finally, all trained \ac{dnn}s are tested with their mean \ac{iou} results on two completely different datasets. One of them is an (also here proposed) real-world dataset is used to see the sim-to-real performance in the bin-picking domain. The other sim-to-real test dataset is the OCID dataset \cite{Suchi2019} which belongs to the common indoor objects domain. 
@@ -46,9 +45,9 @@
 		Investigating generalization, shape-texture bias, and sim-to-real transfer with a focus on depth data and shape-texture quantity must come with reduced scope and delimitations. Otherwise, it would be an excess of work. \\
 		First, only Mask R-CNN \cite{Kaiming2017} is used as \ac{dnn} because many assumptions are made on top of research for \ac{cnn}-based approaches.
 		Moreover, all used \ac{dnn}s are trained on the same type of datasets, where only the objects' shape, texture, and position vary.
-		Both named delimitations are important in excluding influences from data and model architecture with certainty. Another \ac{dnn} architecture can differ in bias, accuracy, and learning. Mask R-CNN's wide range of use, distribution, and flexibility made it a good choice as \ac{dnn} for this study.\\
+		Both named delimitations are important in excluding other influences from data and model architecture with certainty. Another \ac{dnn} architecture can differ in bias, accuracy, and learning. Mask R-CNN's wide range of use, distribution, and flexibility made it a good choice as \ac{dnn} for this study.
 		For the same reason, every \ac{dnn} used the same hyper-parameters for training, which are described in chapter \ref{chap:kapitel4}. Even if there are more beneficial parameters, these parameters must be consistently equal during the studies to eliminate a possible influence.\\
-		This work focuses mainly on instance segmentation for bin-picking. Which is a common task of instance segmentation and important for automation\cite{Raj2023}\cite{Danielczuk2019}\cite{Xie2021}. However, this research should also be valid and vital for other instance segmentation approaches since there are only a few bin-picking-specific influences, like cluttered scenes and rather consistent light settings.\\
+		This work focuses on instance segmentation for bin-picking. Which is a common task of instance segmentation and important for automation\cite{Raj2023}\cite{Danielczuk2019}\cite{Xie2021}. However, this research should also be valid and vital for other instance segmentation approaches since there are only a few bin-picking-specific influences, like cluttered scenes and rather consistent light settings.\\
 		Another delimitation is the selection of \textit{different} shapes and textures. To quantify the difference between two shapes, as well as the difference between two textures, is difficult to measure and remains challenging. There are some methods, like the Structural Similarity Index Measure \cite{Wang2004}, but it is not a standard approach. Therefore, subjective selection was utilized to ensure practical feasibility, as objective methods proved insufficiently reliable for this context.
 		\\
 		Due to the amount of studies and time limitations, a limited test-data size is given.\\
@@ -67,6 +66,7 @@
 		Here are some important definitions for this work to make a clear point and prevent misunderstandings.\\
 		\textbf{Instance Segmentation:} Instance Segmentation is the task of finding and labeling every foreground object in an image pixel-wise. The classification of these objects is optional and plays no role in the segmentation. Defining when an object belongs to the foreground and when to the background is domain-specific and can even differ in a domain depends on the project's requirements. This study defines \textit{foreground objects} as objects that are wanted to be used for bin-picking in an industrial environment.\\ %Most likely every object inside a given bin.\\
 		\textbf{Bin Picking:} During bin picking, a robot tries to grasp an object from a bin and uses or transports it to another place. Instance Segmentation is needed in bin picking to find all available objects with their exact position in the bin.\\
+		\\
 		\textbf{Texture:} Texture is an object's visual appearance and pattern. An object can have the texture of a rock, water, salt, skin, piece of wood, steel beam, and much more. Texture falls into the category of local information. It describes specific areas on a detailed level and does not describe the overall shape.\\
 		\textbf{Material:} A material describes the physical properties of an object, like color, metalness, roughness, and the height of the surface. If a picture is taken of an object that has a material, on the picture, the texture of the object is visible, which is defined by its material. The properties of a material can be described as number values, like (0, 255, 0) for the color green or 0.8 for a high metalness, or, for more complexity, as textures.\\
 		\textbf{Shape:} A Shape defines the geometry of an object. It is also often referred to as mesh or 3D-model. Simple shapes are spheres and rectangles. Shapes are global information. It defines the boundaries of an object and is only available in the broader view.\\
@@ -77,9 +77,9 @@
 		% For example a new domain with a completely different background, resolution, quality, and quantity is a \ac{ood} data.
 		\textbf{In-distribution data:} Data which is similar to the train data of a \ac{dnn}. The same domain, background and same methodology.\\
 		\textbf{Generalization:} The \ac{dnn}'s ability to generalize defines how well it learns the underlying task and patterns of the train data. Shape- or texture-generalization, in instance segmentation specifically, is the ability to learn to segment objects with their shape or texture, even if they are novel to the \ac{dnn}. Meaning that the network learned how to extract shape or texture and detect object boundaries with this information. \\
-		\textbf{Bias:} A bias shows a preferred, learned strategy to solve a task. It is most likely caused by the train data itself but also influenced by the \ac{dnn} architecture. A shape- or texture bias is present when the \ac{dnn} prefers the global shape information or the local texture information to make mask predictions.\\
+		\textbf{Bias:} A bias shows a preferred, learned strategy to solve a task. It is most likely caused by the train data itself but also influenced by the \ac{dnn} architecture. A shape- or texture bias is present when the \ac{dnn} prefers the global shape information or the local texture information to make mask predictions.
+		\clearpage
 		\textbf{Sim-to-real:} Sim-to-real is the transfer from synthetic train data to the real world. Synthetic data is used through its cheap and fast production and the challenging collection of labeled real data. The quality of synthetic data fluctuates but is always much less complex than the natural world and does not reproduce reality precisely enough, thus causing a gap. The goal is that the \ac{dnn} generalize well enough to bridge this sim-to-real gap.\\
-		\\
 		\textbf{Occlusions:} If only a part of an object is visible because another object lies on top, it is referred to as occlusion. Occlusion is a common problem in clutter scenes, appearing often in instance segmentation.
 		
 	
