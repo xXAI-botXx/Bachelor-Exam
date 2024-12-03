@@ -16,7 +16,7 @@
 	\clearpage
 	\section{Shape vs. Texture Attention Test}
 	\label{sec:shape-texutre-attention-test}
-		The Shape vs. Texture Attention Test tries to figure out whether the \ac{dnn} prefers to use local information (texture) or global information (shape) for decision-making. Research already proves that there is a bias towards texture in instance segmentation models \cite{Theodoridis2022}. This experiment wants to confirm this claim for the data used and the Mask R-CNN model.\\
+		The Shape vs. Texture Attention Test tries to figure out whether the \ac{dnn} prefers to use local information (texture) or global information (shape) for decision-making. Research already proves that there is a bias towards texture in instance segmentation models \cite{Theodoridis2022}. This experiment tries to confirm this claim for the 3xM datasets and the Mask R-CNN model.\\
 		Eight handcrafted exceptional cases were built to achieve that. The environment of these scenes is equal to the train data. Truly special is that in four cases, the shapes have multiple textures, and in the other 4 cases, the shapes have the same texture. All of these cases are difficult to solve, when only looking at the texture, it is important to use the global shape information in order to get a precise mask prediction. For us humans, it is obvious to use the global information (shape) to assign the pixels to the objects, but a \ac{dnn} can decide differently \cite{Geirhos2020}\cite{Mohla2022}\cite{Baker2020}.\\
 		% The experiment is still influenced by the fact that \ac{dnn} does not only use one of them to make their decision.
 		All used textures and shapes were also part of the training of every \ac{dnn}. Novel textures and shapes were omitted to exclude the influence of unknown data.\\
@@ -40,7 +40,6 @@
 			\item A dataset with known shapes and unknown textures tests the texture generalization.
 		\end{itemize}
 		These experiments will show if the \ac{dnn}s just learned the train data or a pattern behind it. Do they learn the shapes in the train data or, more generally, use shape information for segmentation? The same applies to texture.\\
-		In addition, this test will show the influence of depth and shape/texture on these investigations.\\
 		The general performance is expected to be good (above 70\% mean \ac{iou}) but with space for improvements, due to the limited train time. The generalization of novel objects is expected to be good since it still is in-distribution data and is expected to generalize enough for such a task. The shape generalization is expected to improve with depth data and more unique shapes in the train data. The expectation for texture generalization is equal to the expectation from shape generalization but relates to the texture amount and texture bias.\\
 		 %is that a higher amount of textures in the train data leads to a higher generalization, and networks using depth data should also lead to better performance due to the smaller expected texture bias.\\
 		This experiment will measure the results using the mean \acl{iou}. A mask can be defined as a two-dimensional complex shape. The \ac{iou} is a standard metric in comparing shapes as stated by \textcite{Rezatofighi2019}, \enquote{IoU, also known as Jaccard index, is the most commonly used metric for comparing the similarity between two arbitrary shapes.}. The \ac{iou} is well comprehensible. The \ac{iou} measures how high the overlay of two shapes is by dividing their intersection area, where the shapes overlay with each other, with their area of union, the summarized area of both shapes. This means \ac{iou} is a metric in percentage: how much does two objects overlay related to their total taken space. The resulting mean \ac{iou}s will be compared.
@@ -112,9 +111,9 @@ def calc_metric_with_object_matching(mask_1, mask_2, metric_func):
 		One part of this experiment compares the proposed \ac{dnn}s to see the influence of depth and unique shape/texture amount towards sim-to-real ability.\\
 		Another part is the comparison to the results from the in-distribution results to see the general sim-to-real ability also in comparison to the performance to the in-distribution performance.\\
 		Lastly the sim-to-real results of both datasets are compared.\\
-		For measuring the sim-to-real ability the \ac{iou} will be described, as described in section \ref{sec:in-distribution-performance-generalization}.\\
+		For measuring the sim-to-real ability the \ac{iou} will be used, as described in section \ref{sec:in-distribution-performance-generalization}.\\
 		\\
-		Two real-world datasets were chosen for this experiment to observe the just-mentioned objectives on different resolutions, qualities, and domains. The OCID dataset is a widely used dataset \citetitle{Xiang2021} and has different resolutions and quality.
+		Two real-world datasets were chosen for this experiment to observe the just-mentioned objectives on different resolutions, qualities, and domains. The OCID dataset is a widely used dataset \cite{Xiang2021} and has different resolutions and quality.
 	
 	
 	

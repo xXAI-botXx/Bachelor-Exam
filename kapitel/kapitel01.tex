@@ -36,13 +36,13 @@
 		This study presents 18 Mask R-CNN \cite{Kaiming2017} models. Nine models were trained on RGB-only data, and nine were trained on RGB depth data.\\
 		Each model is trained on another (here proposed) synthetic dataset. The datasets were created in Unreal Engine 5 \cite{Romero2022} and consist of 20.000 RGB, depth, and mask-images. The shapes and textures used vary between the datasets.\\ 
 		With these 18 \ac{dnn}s, three different studies were performed for generalization, shape-texture bias, and sim-to-real transfer. A few sets of data that have special and puzzling textures show if the \ac{dnn} learned to prefer shape or texture. This data includes images where the objects have multiple textures and images where the objects all have the same texture. An in-distribution test dataset with a structured combination of novel and known shapes and textures is proposed to test the performance and generalization of shape and texture.\\
-		Finally, all trained \ac{dnn}s are tested with their mean \ac{iou} results on two completely different datasets. One of them is an (also here proposed) real-world dataset is used to see the sim-to-real performance in the bin-picking domain. The other sim-to-real test dataset is the OCID dataset \cite{Suchi2019} which belongs to the common indoor objects domain. 
+		Finally, all trained \ac{dnn}s are tested with their mean \ac{iou} results on two completely different real-world datasets. One of them is an (also here proposed) real-world dataset, used to see the sim-to-real performance in the bin-picking domain. The other sim-to-real test dataset is the OCID dataset \cite{Suchi2019} which belongs to the common indoor objects domain. 
 		
 	
 	
 	\section{Scope and Delimitations}
 	\label{sec:scope-and-delimitations}
-		Investigating generalization, shape-texture bias, and sim-to-real transfer with a focus on depth data and shape-texture quantity must come with reduced scope and delimitations. Otherwise, it would be an excess of work. \\
+		Investigating generalization, shape-texture bias, and sim-to-real transfer with a focus on depth data and shape-texture quantity must come with reduced scope and with delimitations. Otherwise, it would be an excess of work. \\
 		First, only Mask R-CNN \cite{Kaiming2017} is used as \ac{dnn} because many assumptions are made on top of research for \ac{cnn}-based approaches.
 		Moreover, all used \ac{dnn}s are trained on the same type of datasets, where only the objects' shape, texture, and position vary.
 		Both named delimitations are important in excluding other influences from data and model architecture with certainty. Another \ac{dnn} architecture can differ in bias, accuracy, and learning. Mask R-CNN's wide range of use, distribution, and flexibility made it a good choice as \ac{dnn} for this study.
@@ -68,11 +68,11 @@
 		\textbf{Bin Picking:} During bin picking, a robot tries to grasp an object from a bin and uses or transports it to another place. Instance Segmentation is needed in bin picking to find all available objects with their exact position in the bin.\\
 		\\
 		\textbf{Texture:} Texture is an object's visual appearance and pattern. An object can have the texture of a rock, water, salt, skin, piece of wood, steel beam, and much more. Texture falls into the category of local information. It describes specific areas on a detailed level and does not describe the overall shape.\\
-		\textbf{Material:} A material describes the physical properties of an object, like color, metalness, roughness, and the height of the surface. If a picture is taken of an object that has a material, on the picture, the texture of the object is visible, which is defined by its material. The properties of a material can be described as number values, like (0, 255, 0) for the color green or 0.8 for a high metalness, or, for more complexity, as textures.\\
+		\textbf{Material:} A material describes the physical properties of an object, like color, metalness, roughness, and the height of the surface. If a picture is taken of an object that has a material, on the picture, the texture of the object is visible, which is defined by its material. The properties of a material can be described as number values, like (0, 255, 0) for the color green and 0.8 for a high metalness, or, for more complexity, as textures.\\
 		\textbf{Shape:} A Shape defines the geometry of an object. It is also often referred to as mesh or 3D-model. Simple shapes are spheres and rectangles. Shapes are global information. It defines the boundaries of an object and is only available in the broader view.\\
 		\textbf{Depth data:} As depth mentioned data, are images that contain information about the distance from every pixel. The images have only one channel. Each pixel value represents the distance of the corresponding point in reality to the camera.\\
 		\textbf{Novel Objects:} Novel objects are objects that were not part of the \ac{dnn}'s training. Novel objects are a typical challenge for bin-picking since there are often unique and innovative products in production and automation pipelines.\\
-		\textbf{Domain:} Domain refers to the specific environment or context in which a task or system operates. The domain defines the characteristics of the data; the types of objects, conditions, and setups encountered, such as the industrial environment for bin-picking tasks or the medical environment with different lighting and different objects. The domain influences how models are trained and evaluated, as performance can vary across different domains.
+		\textbf{Domain:} Domain refers to the specific environment or context in which a task or system operates. The domain defines the characteristics of the data; the types of objects, conditions, and setups encountered, such as the industrial environment for bin-picking tasks or the medical environment with different lighting and different objects. The domain influences how models are trained and evaluated, as performance can vary across different domains.\\
 		\textbf{Out of distribution data:} Data which differs essentially from the train data of a \ac{dnn}. \acl{ood} can include novel shapes, textures, backgrounds, resolutions, or other conditions not seen during the training.\\
 		% For example a new domain with a completely different background, resolution, quality, and quantity is a \ac{ood} data.
 		\textbf{In-distribution data:} Data which is similar to the train data of a \ac{dnn}. The same domain, background and same methodology.\\
@@ -90,7 +90,7 @@
 		Chapter \ref{chap:kapitel3} provides a description of used tools and environments for training and data generation. Furthermore, the implementation of the used \ac{dnn} and data generation will be explained.\\
 		Proceeding to chapter \ref{chap:kapitel4} where the concept of experiments and measurement of the results is described.\\
 		The 'results' chapter \ref{chap:kapitel5} shows the results of the experiments, followed by a discussion and thoughts about these and what maybe limitates the claims.\\
-		Ultimately a summary of the foundings is outlined in chapter \ref{chap:kapitel6}.
+		Ultimately, a summary of the findings is outlined in chapter \ref{chap:kapitel6}, including an outlook for future work and a drawback to challenges and learnings during this work.
 		
 
 
