@@ -1,30 +1,9 @@
 It follows:
-1. Original Part -> https://github.com/xXAI-botXx/Vorlage-Abschlussarbeit-Latex
-2. My notes
-
-# LaTeX-Vorlage für Abschlussarbeiten 
-
-Die Datei `thesis.tex` ist die Hauptdatei des Projekts.  
-In der Datei `docinfo.tex` können die Angaben zu Titel, Autor etc. eingetragen
-werden.  
-Das Editieren der Datei `titelblatt.tex` ist normalerweise nicht notwendig.
-Lediglich wenn auch das Logo eines Unternehmens auf dem Titelblatt abgebildet
-werden soll, muss die Datei angepasst werden. Ein Beispiel dazu ist als
-Kommentar in der Datei vorhanden. 
-
-Als Compiler ist [Latexmk](http://personal.psu.edu/~jcc8/software/latexmk/) zu
-verwenden. Siehe Datei `Makefile`.
-
-Die Vorlage wurde von Andreas Männle zur Verfügung gestellt. Vielen Dank!
-
-Anregungen und Hinweise zur Optimierung der Vorlage senden Sie an
-stefan.hensel@hs-offenburg.de
-
-Viel Erfolg!
+1. [My notes in german language](#meine-bachelorarbeit)
+2. [Original Part](#latex-vorlage-für-abschlussarbeiten) -> https://github.com/xXAI-botXx/Vorlage-Abschlussarbeit-Latex
 
 
 ---
-
 # Meine Bachelorarbeit
 
 Dieses Dokument dient mir als Begleitdokument bei der Erstellung meiner Bachelorarbeit. Hier werde ich alle relevanten Notizen und Anmerkungen und Planungen machen.
@@ -35,10 +14,17 @@ Tags: Computer Vision, Deep Learning, Syntethic Datageneration
 
 Sprache: Englisch
 
-Title:
-- Depth Data and Shape-Texture Biases in Instance Segmentation
-or
-- Using 3D-Information Improves Shape Awareness
+Title:<br>
+Investigating the Influence of Depth Information and the Amount of Shapes and Textures on Bias and Performance in Instance Segmentation
+
+
+**Meine Bachelorarbeit:** https://1drv.ms/b/s!AqSTBkFULemxmJgnJLD-nk2EkOn5dA?e=8EEuwZ <br>
+**Mein Kolloqium Folien:** https://1drv.ms/b/s!AqSTBkFULemxms11RcerjNCJLpLKlQ?e=YzaHdc <br>
+**Note:** 1,7 (note system: 1 best, 6 worst)
+
+
+Die Bilder sind hier verfügbar: https://1drv.ms/f/s!AqSTBkFULemxmJgqLjYm2hMivGiqtw?e=y374Kg
+
 
 
 
@@ -305,7 +291,7 @@ Evaluation mit folgenden KI-Modellen:
 
 Metriken:
 - Pixel-Accuracy
-- ...
+- IOU
 
 
 ### Präsentation
@@ -318,6 +304,12 @@ Struktur:
 - Experiment
 - Aktuelle Ergebnisse + Schlussfolgerung (Mehrwert)
 - Fazit
+
+Verbesserung:
+- Visualisierung vereinfacht anzeigen
+- Ergebnisse zeigen
+- Wie werden die metriken berechnet?
+- Beispiele zu Ergebnissen zeigen (Model kann nicht gut mit Katzen umgehen, aber das andere schon -> zeigen)
 
 
 ### Quellen & Fakten
@@ -433,6 +425,29 @@ Hier sind einige spezifische Aspekte, die du untersuchst:
 Zusammenfassend lässt sich sagen, dass du den Shape-Texture-Bias untersuchst, um zu verstehen, welche Merkmale dein Modell stärker gewichtet, wenn es um die Segmentierung von Objekten geht.
 
 
+
+
+
+---
+# LaTeX-Vorlage für Abschlussarbeiten 
+
+Die Datei `thesis.tex` ist die Hauptdatei des Projekts.  
+In der Datei `docinfo.tex` können die Angaben zu Titel, Autor etc. eingetragen
+werden.  
+Das Editieren der Datei `titelblatt.tex` ist normalerweise nicht notwendig.
+Lediglich wenn auch das Logo eines Unternehmens auf dem Titelblatt abgebildet
+werden soll, muss die Datei angepasst werden. Ein Beispiel dazu ist als
+Kommentar in der Datei vorhanden. 
+
+Als Compiler ist [Latexmk](http://personal.psu.edu/~jcc8/software/latexmk/) zu
+verwenden. Siehe Datei `Makefile`.
+
+Die Vorlage wurde von Andreas Männle zur Verfügung gestellt. Vielen Dank!
+
+Anregungen und Hinweise zur Optimierung der Vorlage senden Sie an
+stefan.hensel@hs-offenburg.de
+
+Viel Erfolg!
 
 
 
